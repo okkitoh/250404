@@ -3,9 +3,6 @@
 
 #include <iostream>
 
-
-using namespace std;
-
 TCHAR getch() {
     DWORD mode, cc; // unsigned 32 bytes, flags for session
     HANDLE h = GetStdHandle(STD_INPUT_HANDLE); // stdin
@@ -18,15 +15,14 @@ TCHAR getch() {
     SetConsoleMode(h, mode);
     return c;
 }
-
 void getIntsFromUser(std::vector<int>& in, char terminator) {
     in.clear();
 
-    string input;
+    std::string input;
     char* token = NULL;
     do
     {
-        getline(cin, input);
+        std::getline(std::cin, input);
         trim(input);
         if (input.length())
         {

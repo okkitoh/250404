@@ -1,70 +1,63 @@
 
-#ifndef __PARTONE_H__
-#define __PARTONE_H__
-
-
+#include "PartOne.h"
 
 #include <iostream>
 #include <algorithm>
 #include <string>
 #include <vector>
 #include <windows.h>
-
-#include "PartOne.h"
 #include "common.h"
 
 
-using namespace std;
-
 void NameAndAgeExercise()
 {
-    string input; // these are mutable arrays
-    string input2;
-    cout << "Enter name: ";
-    getline(cin, input);
+    std::string input; // these are mutable arrays
+    std::string input2;
+    std::cout << "Enter name: ";
+    std::getline(std::cin, input);
 
     int result = -1;
-    cout << "Enter Age: ";
+    std::cout << "Enter Age: ";
     while (!(result > 0))
     {
-        getline(cin, input2);
+        std::getline(std::cin, input2);
         result = atoi(input2.c_str());
         if (!(result > 0))
         {
-            cout << "Not a valid age. Enter another: " << endl;
+            std::cout << "Not a valid age. Enter another: " << std::endl;
         }
     }
-    cout << "\nHi, " << input << "of age " << result << endl;
-    cout << "\nEOF :: Press any key to continue" << endl;
+    std::cout << "\nHi, " << input << "of age " << result << std::endl;
+    std::cout << "\nEOF :: Press any key to continue" << std::endl;
     getch(); // result output pause, eat input buffer
 }
 void MetricConversionExercise()
 {
-    string input;
+    std::string input;
     int celcius = 0;
     float pounds = 0.f;
     double dollars = 0.0;
-    cout << "Enter value in celsius: ";
-    getline(cin, input);
+    std::cout << "Enter value in celsius: ";
+    std::getline(std::cin, input);
     celcius = atoi(input.c_str());
     printf("%d C => %f F\n", celcius, 32.f + (9.f / 5.f * celcius));
     printf("\nEnter value in pounds: ");
-    getline(cin, input);
+    std::getline(std::cin, input);
     pounds = atof(input.c_str());
     printf("%f lb => %f kg\n", pounds, pounds / 0.4535924f);
     printf("\nEnter value in USD: $");
-    getline(cin, input);
+    std::getline(std::cin, input);
     dollars = atof(input.c_str());
     printf("Conversion rate 1 $ = 0.91 €\n%f $ => %f €\n", dollars, dollars * 0.91);
 
-    cout << "\nEOF :: Press any key to continue" << endl;
+    std::cout << "\nEOF :: Press any key to continue" << std::endl;
     getch(); // result output pause, eat input buffer
 }
 void AverageOfIntsExercise()
 {
-    string input;
+    std::string input;
     printf("\nprint sequence of numbers separated by a space e.g. 1 1 2 3 5:\nYour numbers: ");
-    getline(cin, input);
+    std::getline(std::cin, input);
 
     if (!input.length()) {
         printf("Average: 0\n");
@@ -100,12 +93,12 @@ void AverageOfIntsExercise()
         line = nullptr;
     }
 
-    cout << "\nEOF :: Press any key to continue" << endl;
+    std::cout << "\nEOF :: Press any key to continue" << std::endl;
     getch(); // result output pause, eat input buffer
 }
 void LargestAndSmallestExercise()
 {
-    vector<int> numbers;
+    std::vector<int> numbers;
     printf("\nprint sequence of numbers separated by a space e.g. 1 1 2 3 5:\nYour numbers: ");
     getIntsFromUser(numbers, '\n');
     if (!numbers.size())
@@ -115,15 +108,12 @@ void LargestAndSmallestExercise()
     }
     else
     {
-        sort(numbers.begin(), numbers.end());
+        std::sort(numbers.begin(), numbers.end());
 
         //quicksort(numbers, 0, tklen - 1);
         printf("Largest: %d\n", *(--numbers.end()));
         printf("Smallest: %d\n", numbers[0]);
     }
-    cout << "\nEOF :: Press any key to continue" << endl;
+    std::cout << "\nEOF :: Press any key to continue" << std::endl;
     getch(); // result output pause, eat input buffer
 }
-
-
-#endif

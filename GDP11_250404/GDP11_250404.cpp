@@ -7,6 +7,8 @@
 
 #include "common.h"
 #include "PartOne.h"
+#include "PartTwo.h"
+
 
 using namespace std;
 
@@ -28,17 +30,38 @@ int main()
             << "[8] Sq metreage" << endl;
         keydown = getch();
 
-        if (keydown == '1') {
+        if (keydown == '1')
+        {
             NameAndAgeExercise();
         }
-        if (keydown == '2') {
+        if (keydown == '2')
+        {
             MetricConversionExercise();
         }
-        if (keydown == '3') {
+        if (keydown == '3')
+        {
             AverageOfIntsExercise();
         }
-        if (keydown == '4') {
+        if (keydown == '4')
+        {
             LargestAndSmallestExercise();
+        }
+
+        if (keydown == '5')
+        {
+            HighestNumberExercise();
+        }
+        if (keydown == '6')
+        {
+            EvenedOddsExercise();
+        }
+        if (keydown == '7')
+        {
+            ReverseForLoopExercise();
+        }
+        if (keydown == '8')
+        {
+            SquareMeterageExercise();
         }
         
     } while (keydown != 'x' && keydown != 'X');
