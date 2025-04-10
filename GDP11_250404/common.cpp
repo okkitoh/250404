@@ -3,7 +3,27 @@
 
 #include <iostream>
 
-TCHAR getch() {
+namespace MyCommon
+{
+    int partition(std::vector<int>& tosort, int l, int r)
+    {
+        int pivot = tosort[r];
+        int iter = l - 1; // keeps track of last swapped position
+        for (int i = l; i <= r - 1; ++i) {
+            if (tosort[i] <= pivot) {
+                ++iter;
+                swap(tosort[iter], tosort[i]);
+            }
+        }
+        swap(tosort[iter + 1], tosort[r]);
+
+        return iter + 1;
+    }
+}
+
+
+TCHAR getch()
+{
     DWORD mode, cc; // unsigned 32 bytes, flags for session
     HANDLE h = GetStdHandle(STD_INPUT_HANDLE); // stdin
     if (h == NULL) return 0;
@@ -15,7 +35,8 @@ TCHAR getch() {
     SetConsoleMode(h, mode);
     return c;
 }
-void getIntsFromUser(std::vector<int>& in, char terminator) {
+void getIntsFromUser(std::vector<int>& in, char terminator)
+{
     in.clear();
 
     std::string input;
@@ -74,11 +95,20 @@ void trim(std::string& s)
         }
     }
 }
-
 void swap(int& a, int& b)
 {
     if (a == b) return;
     a = a ^ b;
     b = a ^ b;
     a = a ^ b;
+}
+
+int quicksort(std::vector<int>& tosort, int l, int r)
+{
+    if (l < r) {
+        int it = MyCommon::partition(tosort, l, r);
+        quicksort(tosort, l, it - 1);
+        quicksort(tosort, it + 1, r);
+    }
+    return 0;
 }
