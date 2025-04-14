@@ -127,7 +127,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="GDP11_250413.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="MyGraph.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MyGraph.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

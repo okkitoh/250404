@@ -6,6 +6,9 @@
 
 int main()
 {
+    //std::mt19937 Generator;
+    //std::uniform_int_distribution<> Distribution;
+
     AMGraph::Create(10);
     AMGraph::AddEdge(1, 2);
     AMGraph::AddEdge(2, 3);

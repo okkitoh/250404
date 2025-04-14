@@ -13,6 +13,7 @@ namespace AMGraph
 	void Print();
 	std::vector<int> Explore(int start);
 	std::vector<std::vector<int>> ExploreAll();
+	std::vector<int> FindPath(int start, int end);
 }
 
 namespace LLGraph

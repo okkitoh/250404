@@ -54,10 +54,10 @@ void AMGraph::Print()
     printf("\n---+--------------------\n");
     for (int r = 0; r < NUMOFVERTS; ++r)
     {
-	    printf(" %-2d| ", r);
-	    for (int c = 0; c < NUMOFVERTS; ++c)
+        printf(" %-2d| ", r);
+        for (int c = 0; c < NUMOFVERTS; ++c)
         {
-		    printf("%-2d", adjacencyMatrix[r][c]);
+            printf("%-2d", adjacencyMatrix[r][c]);
 	    }
 	    printf("\n");
     }
@@ -126,4 +126,9 @@ std::vector<std::vector<int>> AMGraph::ExploreAll()
     delete[] visited;
     subgraphs.resize(connectedComponentIndex);
     return subgraphs;
+}
+// Running a breadth first search. This is useful for naive pathfinding
+std::vector<int> FindPath(int start, int end)
+{
+
 }
