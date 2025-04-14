@@ -1,0 +1,129 @@
+
+#include "MyGraph.h"
+
+
+namespace AMGraph
+{
+    char **adjacencyMatrix = nullptr;
+    int NUMOFVERTS = 0;
+}
+
+
+void AMGraph::Create(int num_of_vertices)
+{
+    NUMOFVERTS = num_of_vertices;
+
+    if (adjacencyMatrix != nullptr)
+    {
+        for (int row = 0; row < NUMOFVERTS; ++row)
+        {
+            delete [] adjacencyMatrix[row];
+        }
+        delete [] adjacencyMatrix;
+    }
+
+    // Dynamically allocate | V x V | grid of characters
+    adjacencyMatrix = new char*[NUMOFVERTS];
+    for (int row = 0; row < NUMOFVERTS; ++row)
+    {
+        adjacencyMatrix[row] = new char[NUMOFVERTS];
+        // This is the long hand way. 3rd arg expects # of bytes, char type is 1 byte. 0-254
+        // Also why many old online games put a cap of 255 [null, 255) Faster to send 1 byte
+        memset(adjacencyMatrix[row], 0, sizeof(char) * NUMOFVERTS);
+    }
+}
+void AMGraph::AddEdge(int start, int end)
+{
+    // Marking edges on the matrix.
+    // rows (going downward) are start vertices
+    // columns (going across) are end verties
+    // matrix[row][col] 0 means no edge
+    //                  1 means has edge
+    // Edges are symmetrical in an undirected graph
+    adjacencyMatrix[start][end] = 1;
+    adjacencyMatrix[end][start] = 1;
+}
+void AMGraph::Print()
+{
+    printf("Adjacency Matrix\n");
+    printf("   | ");
+    for (int h = 0; h < NUMOFVERTS; ++h)
+    {
+        printf("%-2d", h);
+    }
+    printf("\n---+--------------------\n");
+    for (int r = 0; r < NUMOFVERTS; ++r)
+    {
+	    printf(" %-2d| ", r);
+	    for (int c = 0; c < NUMOFVERTS; ++c)
+        {
+		    printf("%-2d", adjacencyMatrix[r][c]);
+	    }
+	    printf("\n");
+    }
+}
+// Running a depth first search. Useful in understanding the characteristics of a graph
+// How many subgraphs?
+// Back edges and cyclic vs acyclic nature
+std::vector<int> AMGraph::Explore(int start)
+{
+    std::vector<int> visited = std::vector<int>();
+    visited.resize(NUMOFVERTS);
+
+    std::vector<int> tovisit = std::vector<int>();
+    tovisit.push_back(start);
+    // This is the iterative version of explore and is much more lighter weight (memory-wise)
+    // than the recursive version that eats up stack memory.
+    while (!tovisit.empty())
+    {
+        int vertex = tovisit.back();
+        visited[vertex] = 1;
+        tovisit.pop_back();
+        // Poor Runtime: O(V * V)
+        // need to look at every column of every row to find if edge exists
+        for (int column = 0; column < NUMOFVERTS; ++column)
+        {
+            // add to the stack (tovisit) neighbors that have not been visited:
+            // we have not visited this vertex
+            // edges exists between our vertex and another vertex
+            if (!visited[column] && adjacencyMatrix[vertex][column] == 1)
+            {
+                tovisit.push_back(column);
+            }
+        }
+    }
+
+    return visited;
+}
+std::vector<std::vector<int>> AMGraph::ExploreAll()
+{
+    std::vector<std::vector<int>> subgraphs = std::vector<std::vector<int>>();
+    subgraphs.resize(NUMOFVERTS);
+    int connectedComponentIndex = 0;
+    // wtf add 1 to appease the compiler gods. they want their '\0'
+    char* visited = new char[NUMOFVERTS+1];
+    memset(visited, 0, NUMOFVERTS);
+
+    for (int i = 0; i < NUMOFVERTS; ++i)
+    {
+        if (visited[i] == 1)
+        {
+            continue;
+        }
+
+        int vertex = i;
+        std::vector<int> explored = Explore(vertex);
+        subgraphs[connectedComponentIndex] = explored;
+        connectedComponentIndex++;
+        for (int j = 0; j < explored.size(); ++j)
+        {
+            if (explored[j] == 1)
+            {
+                visited[j] = 1;
+            }
+        }
+    }
+    delete[] visited;
+    subgraphs.resize(connectedComponentIndex);
+    return subgraphs;
+}
