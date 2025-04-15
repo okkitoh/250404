@@ -1,6 +1,7 @@
 
 #include "MyGraph.h"
-
+#include <queue>
+#include <map>
 
 namespace AMGraph
 {
@@ -11,8 +12,6 @@ namespace AMGraph
 
 void AMGraph::Create(int num_of_vertices)
 {
-    NUMOFVERTS = num_of_vertices;
-
     if (adjacencyMatrix != nullptr)
     {
         for (int row = 0; row < NUMOFVERTS; ++row)
@@ -22,6 +21,7 @@ void AMGraph::Create(int num_of_vertices)
         delete [] adjacencyMatrix;
     }
 
+    NUMOFVERTS = num_of_vertices;
     // Dynamically allocate | V x V | grid of characters
     adjacencyMatrix = new char*[NUMOFVERTS];
     for (int row = 0; row < NUMOFVERTS; ++row)
@@ -58,8 +58,8 @@ void AMGraph::Print()
         for (int c = 0; c < NUMOFVERTS; ++c)
         {
             printf("%-2d", adjacencyMatrix[r][c]);
-	    }
-	    printf("\n");
+        }
+        printf("\n");
     }
 }
 // Running a depth first search. Useful in understanding the characteristics of a graph
@@ -127,8 +127,59 @@ std::vector<std::vector<int>> AMGraph::ExploreAll()
     subgraphs.resize(connectedComponentIndex);
     return subgraphs;
 }
-// Running a breadth first search. This is useful for naive pathfinding
-std::vector<int> FindPath(int start, int end)
+// Running a breadth first search
+// Useful in finding shortest path but exponentially expensive with size and density requirement
+// Flow field generation, water takes the path of least resistance. tower defense game
+// If only seeking shortest path, there are better heuristic systems
+// Djikstra
+// A*
+std::vector<int> AMGraph::FindPath(int start, int end)
 {
+    std::vector<int> visited = std::vector<int>();
+    visited.resize(NUMOFVERTS);
+    
+    // while DFS used a stack, BFS uses a queue to hold neighbors first in/first out. snek eat, snek poop
+    std::queue<int> tovisit;
+    tovisit.push(start);
 
+    std::map<int, int> path;
+    while (!tovisit.empty())
+    {
+        int vertex = tovisit.front();
+        tovisit.pop();
+        visited[vertex] = 1;
+        // the search for neighbors
+        for (int column = 0; column < NUMOFVERTS; ++column)
+        {
+            if (!visited[column] && adjacencyMatrix[vertex][column] == 1)
+            {
+                path[column] = vertex;
+                if (column == end)
+                {
+                    tovisit = std::queue<int>();
+                    break;
+                }
+                tovisit.push(column);
+            }
+        }
+    }
+    visited.clear();
+
+    // solve backwards following distance field aka flow map
+    int next = end;
+    while(next != start && path.find(next) != path.end())
+    {
+        visited.push_back(next);
+        next = path[next];
+    }
+    if (next == start)
+    {
+        visited.push_back(next);
+    }
+    else
+    {
+        visited.clear();
+    }
+    std::reverse(visited.begin(), visited.end());
+    return visited;
 }
