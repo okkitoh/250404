@@ -10,10 +10,12 @@ namespace AMGraph
 {
 	void Create(int num_of_vertices);
 	void AddEdge(int start, int end); // 0-based indexing
+	void AddEdge(int start, int end, int weight);
 	void Print();
 	std::vector<int> Explore(int start);
 	std::vector<std::vector<int>> ExploreAll();
 	std::vector<int> FindPath(int start, int end);
+	std::vector<int> Djikstra(int start, int end);
 }
 
 namespace LLGraph

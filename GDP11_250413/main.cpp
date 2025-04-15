@@ -41,11 +41,11 @@ int main()
     // Main path
     AMGraph::AddEdge(1, 2);
     AMGraph::AddEdge(2, 3);
-    AMGraph::AddEdge(3, 4);
+    AMGraph::AddEdge(3, 4, 9);
     AMGraph::AddEdge(4, 5);
     AMGraph::AddEdge(5, 9);
     // Dead-end
-    AMGraph::AddEdge(3, 6);
+    AMGraph::AddEdge(3, 6, 1);
     AMGraph::AddEdge(6, 7);
     AMGraph::AddEdge(7, 8);
 
@@ -59,13 +59,13 @@ int main()
         {9, 7},
         {0, 0},
         {6, 0},
-        {8, 9}
+        {1, 7}
     };
     std::map<int, int>::iterator iter = testdriver.begin();
     while (iter != testdriver.end())
     {
         printf("\nFinding a path from %d to %d:\n", iter->first, iter->second);
-        std::vector<int> path = AMGraph::FindPath(iter->first, iter->second);
+        std::vector<int> path = AMGraph::Djikstra(iter->first, iter->second);
         if (path.empty()) {
             printf("!!No Path Found\n");
         }

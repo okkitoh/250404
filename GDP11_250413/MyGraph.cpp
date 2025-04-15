@@ -9,6 +9,16 @@ namespace AMGraph
     int NUMOFVERTS = 0;
 }
 
+struct WeightedEdge
+{
+    int to;
+    int weight;
+
+    bool operator<(const WeightedEdge& other) const {
+        return weight < other.weight;
+    }
+};
+
 
 void AMGraph::Create(int num_of_vertices)
 {
@@ -34,14 +44,18 @@ void AMGraph::Create(int num_of_vertices)
 }
 void AMGraph::AddEdge(int start, int end)
 {
+    AMGraph::AddEdge(start, end, 1);
+}
+void AMGraph::AddEdge(int start, int end, int weight)
+{
     // Marking edges on the matrix.
     // rows (going downward) are start vertices
     // columns (going across) are end verties
     // matrix[row][col] 0 means no edge
     //                  1 means has edge
     // Edges are symmetrical in an undirected graph
-    adjacencyMatrix[start][end] = 1;
-    adjacencyMatrix[end][start] = 1;
+    adjacencyMatrix[start][end] = weight;
+    adjacencyMatrix[end][start] = weight;
 }
 void AMGraph::Print()
 {
@@ -151,7 +165,7 @@ std::vector<int> AMGraph::FindPath(int start, int end)
         // the search for neighbors
         for (int column = 0; column < NUMOFVERTS; ++column)
         {
-            if (!visited[column] && adjacencyMatrix[vertex][column] == 1)
+            if (!visited[column] && adjacencyMatrix[vertex][column] >= 1)
             {
                 path[column] = vertex;
                 if (column == end)
@@ -168,6 +182,58 @@ std::vector<int> AMGraph::FindPath(int start, int end)
     // solve backwards following distance field aka flow map
     int next = end;
     while(next != start && path.find(next) != path.end())
+    {
+        visited.push_back(next);
+        next = path[next];
+    }
+    if (next == start)
+    {
+        visited.push_back(next);
+    }
+    else
+    {
+        visited.clear();
+    }
+    std::reverse(visited.begin(), visited.end());
+    return visited;
+}
+
+std::vector<int> AMGraph::Djikstra(int start, int end)
+{
+    std::vector<int> visited = std::vector<int>();
+    visited.resize(NUMOFVERTS);
+
+    // djikstra requires non-negative edge weights from which it prioritizes
+    // least resistance. when all weights are 1, you have a BFS
+    std::priority_queue<WeightedEdge> tovisit; // priority queue, sorts in ascending, small to large
+    tovisit.push({start, 0});
+
+    std::map<int, int> path;
+    while (!tovisit.empty())
+    {
+        WeightedEdge edge = tovisit.top();
+        tovisit.pop();
+        visited[edge.to] = 1;
+        // the search for neighbors
+        for (int column = 0; column < NUMOFVERTS; ++column)
+        {
+            if (!visited[column] && adjacencyMatrix[edge.to][column] >= 1)
+            {
+                path[column] = edge.to;
+                if (column == end)
+                {
+                    tovisit = std::priority_queue<WeightedEdge>();
+                    break;
+                }
+                tovisit.push({ column, adjacencyMatrix[edge.to][column] });
+            }
+        }
+    }
+    visited.clear();
+
+    // solve backwards following distance field aka flow map
+    int next = end;
+    while (next != start && path.find(next) != path.end())
     {
         visited.push_back(next);
         next = path[next];
