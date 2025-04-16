@@ -15,7 +15,7 @@ namespace AMGraph
 	std::vector<int> Explore(int start);
 	std::vector<std::vector<int>> ExploreAll();
 	std::vector<int> FindPath(int start, int end);
-	std::vector<int> Djikstra(int start, int end);
+	std::vector<int> Dijkstra(int start, int end);
 }
 
 namespace LLGraph

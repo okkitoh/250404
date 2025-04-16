@@ -65,7 +65,58 @@ int main()
     while (iter != testdriver.end())
     {
         printf("\nFinding a path from %d to %d:\n", iter->first, iter->second);
-        std::vector<int> path = AMGraph::Djikstra(iter->first, iter->second);
+        std::vector<int> path = AMGraph::FindPath(iter->first, iter->second);
+        if (path.empty()) {
+            printf("!!No Path Found\n");
+        }
+        else
+        {
+            for (int i = 0; i < path.size(); ++i)
+            {
+                printf("%d ", path[i]);
+            }
+            printf("\n");
+        }
+        iter++;
+    }
+
+    
+    printf("\n\nCreating a cyclic graph with weights\n");
+    printf("0 --(2)-- 1 ----------(9)------      \n");
+    printf("           \\                   \\   \n");
+    printf("           (1)                  \\   \n");
+    printf("             \\                   \\ \n");
+    printf("              2 --(5)-- 3 --(4)-- 4  \n");
+    printf("              |         |         |  \n");
+    printf("             (1)       (1)      (10) \n");
+    printf("              |         |         |  \n");
+    printf("              5 --(1)-- 6 --(9)-- 7  \n");
+    AMGraph::Create(10);
+    // Main path
+    AMGraph::AddEdge(0,1, 2);
+        AMGraph::AddEdge(1,4, 9);
+        
+        AMGraph::AddEdge(1,2, 1);
+        AMGraph::AddEdge(2,3, 5);
+        AMGraph::AddEdge(3,4, 4);
+
+        AMGraph::AddEdge(2,5, 1);
+        AMGraph::AddEdge(5,6, 1);
+        AMGraph::AddEdge(6,3, 1);
+        AMGraph::AddEdge(6,7, 9);
+        AMGraph::AddEdge(7,4, 10);
+    AMGraph::Print();
+
+
+    testdriver = {
+        {0, 4},
+        {3, 9}
+    };
+    iter = testdriver.begin();
+    while (iter != testdriver.end())
+    {
+        printf("\nFinding a path from %d to %d:\n", iter->first, iter->second);
+        std::vector<int> path = AMGraph::Dijkstra(iter->first, iter->second);
         if (path.empty()) {
             printf("!!No Path Found\n");
         }

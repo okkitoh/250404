@@ -15,7 +15,7 @@ struct WeightedEdge
     int weight;
 
     bool operator<(const WeightedEdge& other) const {
-        return weight < other.weight;
+        return weight > other.weight;
     }
 };
 
@@ -60,18 +60,18 @@ void AMGraph::AddEdge(int start, int end, int weight)
 void AMGraph::Print()
 {
     printf("Adjacency Matrix\n");
-    printf("   | ");
+    printf("    |");
     for (int h = 0; h < NUMOFVERTS; ++h)
     {
-        printf("%-2d", h);
+        printf("%3d", h);
     }
-    printf("\n---+--------------------\n");
+    printf("\n----+------------------------------\n");
     for (int r = 0; r < NUMOFVERTS; ++r)
     {
-        printf(" %-2d| ", r);
+        printf("%3d |", r);
         for (int c = 0; c < NUMOFVERTS; ++c)
         {
-            printf("%-2d", adjacencyMatrix[r][c]);
+            printf("%3d", adjacencyMatrix[r][c]);
         }
         printf("\n");
     }
@@ -198,54 +198,54 @@ std::vector<int> AMGraph::FindPath(int start, int end)
     return visited;
 }
 
-std::vector<int> AMGraph::Djikstra(int start, int end)
+std::vector<int> AMGraph::Dijkstra(int start, int end)
 {
-    std::vector<int> visited = std::vector<int>();
-    visited.resize(NUMOFVERTS);
-
     // djikstra requires non-negative edge weights from which it prioritizes
     // least resistance. when all weights are 1, you have a BFS
     std::priority_queue<WeightedEdge> tovisit; // priority queue, sorts in ascending, small to large
     tovisit.push({start, 0});
 
     std::map<int, int> path;
+    path[start] = -1;
+
+    std::map<int, int> visited;
+    visited[start] = 0;
     while (!tovisit.empty())
     {
         WeightedEdge edge = tovisit.top();
         tovisit.pop();
-        visited[edge.to] = 1;
-        // the search for neighbors
-        for (int column = 0; column < NUMOFVERTS; ++column)
+        if (edge.to == end)
         {
-            if (!visited[column] && adjacencyMatrix[edge.to][column] >= 1)
+            break;
+        }
+        else
+        {
+            for (int column = 0; column < NUMOFVERTS; ++column)
             {
-                path[column] = edge.to;
-                if (column == end)
+                if (adjacencyMatrix[edge.to][column] >= 1)
                 {
-                    tovisit = std::priority_queue<WeightedEdge>();
-                    break;
+                    // (traveled amt) + (next step)
+                    int cost = edge.weight + adjacencyMatrix[edge.to][column];
+                    if (!visited.count(column) || cost < visited[column]) {
+                        visited[column] = cost;
+                        path[column] = edge.to;
+                        tovisit.push({ column, cost });
+                    }
                 }
-                tovisit.push({ column, adjacencyMatrix[edge.to][column] });
             }
         }
     }
-    visited.clear();
 
-    // solve backwards following distance field aka flow map
-    int next = end;
-    while (next != start && path.find(next) != path.end())
-    {
-        visited.push_back(next);
-        next = path[next];
+    if (!path.count(end)) {
+        return std::vector<int>();
     }
-    if (next == start)
-    {
-        visited.push_back(next);
+    int current = end;
+    std::vector<int> shortestPath;
+    shortestPath.push_back(end);
+    while (path[current] != -1) {
+        current = path[current];
+        shortestPath.push_back(current);
     }
-    else
-    {
-        visited.clear();
-    }
-    std::reverse(visited.begin(), visited.end());
-    return visited;
+    std::reverse(shortestPath.begin(), shortestPath.end());
+    return shortestPath;
 }
