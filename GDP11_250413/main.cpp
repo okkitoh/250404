@@ -4,6 +4,7 @@
 #include <map>
 
 #include "MyGraph.h"
+#include "ConcreteAStar.h"
 
 
 int main()
@@ -130,4 +131,92 @@ int main()
         }
         iter++;
     }
+
+
+    printf("\n\nCreating a tile based grid with obstacles\n");
+    // Assume origin is at top left like raylib
+    int rows = 6; // row is to y
+    int cols = 6; // col is to x
+    
+    const char WALL = '@';
+    const char FLOOR = '.';
+
+    // This is an undirected graph
+    std::vector<std::vector<char>> TileGraph = 
+    {
+        { '.', '@', '@', '@', '.', '.' },
+        { '.', '.', '.', '@', '.', '.' },
+        { '.', '.', '.', '@', '.', '.' },
+        { '.', '@', '@', '@', '.', '.' },
+        { '.', '.', '.', '.', '.', '.' },
+        { '.', '.', '.', '.', '.', '.' },
+    };
+
+    // Map Bake Stage
+    // ---------------------------------------------------------------------------------
+    // Create an edge list representation from graph
+    // What we're creating here is an adjacency list
+    // It is more performant and saves alot of space vs an adjacency matrix
+    // By using a map to hold the list we're speeding up look up times. If we needed
+    // position 283 in a list, the search would have to start from 0 and iterate to 283.
+    //
+    // A map is a key-value pair and lookups are 0(log n) vs O(n) because 
+    // std::map uses a self balancing tree (red-black tree) for look ups
+    // Like 20 questions, a binary tree can find an answer in 20 questions or less.
+    // It has a logarithmic upper bound no matter how large the search space.
+    std::map<int, std::list<Edge>> driver;
+    std::string header = "\n   +";
+    printf("\n   |");
+    for (int hr = 0; hr < cols; ++hr)
+    {
+        printf("%3d", hr);
+        header += "---";
+    }
+    std::cout << header << " x\n";
+    for (int r = 0; r < rows; ++r)
+    {
+        printf("%2d | ", r);
+        for (int c = 0; c < cols; ++c)
+        {
+            printf("%2c ", TileGraph[r][c]);
+            // Goal for scope: for every tile, check each neighbor and see if path exists
+            if (TileGraph[r][c] == WALL) continue;
+
+            // need to map (x, y) aka (c, r) to a linear space like an array to use as a map key
+            // that is unique for each tile. this is called hashing
+            int index = r * rows + c;
+
+            for (int u = -1; u < 2; ++u)
+            {
+                for (int v = -1; v < 2; ++v)
+                {
+                    if (u == 0 && v == 0)
+                        continue;
+                    int nr = r + u;
+                    int nc = c + v;
+                    if ((nr < 0 || nr >= rows) || (nc < 0 || nc >= cols))
+                        continue;
+                    if (TileGraph[nr][nc] == WALL)
+                        continue;
+
+                    double cost = abs(u) + abs(v) == 2 ? 1.414 : 1.0;
+                    Edge edge = { {c, r}, {nc, nr}, cost };
+                    driver[index].push_back(edge);
+                }
+            }
+        }
+        printf("\n");
+    }
+
+    printf("   y\n\nverify this is true\n");
+    std::map<int, std::list<Edge>>::iterator ity = driver.begin();
+    for (; ity != driver.end(); ++ity)
+    {
+        int y = ity->first / rows;
+        int x = (ity->first % rows);
+        printf("(%2d,%2d) %2d | neighbors %llu", x, y, ity->first, ity->second.size());
+        printf("\n");
+    }
+
+
 }

@@ -197,7 +197,6 @@ std::vector<int> AMGraph::FindPath(int start, int end)
     std::reverse(visited.begin(), visited.end());
     return visited;
 }
-
 std::vector<int> AMGraph::Dijkstra(int start, int end)
 {
     // djikstra requires non-negative edge weights from which it prioritizes
@@ -236,13 +235,15 @@ std::vector<int> AMGraph::Dijkstra(int start, int end)
         }
     }
 
-    if (!path.count(end)) {
+    if (!path.count(end))
+    {
         return std::vector<int>();
     }
     int current = end;
     std::vector<int> shortestPath;
     shortestPath.push_back(end);
-    while (path[current] != -1) {
+    while (path[current] != -1)
+    {
         current = path[current];
         shortestPath.push_back(current);
     }
