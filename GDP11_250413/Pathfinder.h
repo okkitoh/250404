@@ -1,0 +1,48 @@
+#ifndef PATHFINDER_H
+#define PATHFINDER_H
+
+#include <vector>
+#include <list>
+#include <map>
+
+
+
+struct Tile {
+	int x;
+	int y;
+
+	inline bool operator==(const Tile& other) const {
+		return (x == other.x && y == other.y);
+	}
+	inline int hash(int num_of_cols) {
+		return y* num_of_cols + x;
+	}
+};
+
+struct Edge {
+	Tile from;
+	Tile to;
+	double cost;
+};
+
+
+
+// Strategy Pattern
+// Using polymorphism to choose which algorithm to execute at runtime
+class PathFinder {
+public:
+	virtual std::vector<Tile> FindPath(std::map<int, std::list<Edge>>& adjacencyList, int rows, int cols, Tile start, Tile end) = 0; // = 0, pure virtual
+};
+
+
+
+// Derived Class : A* algorithm
+class PF_AStar : public PathFinder {
+private:
+	std::vector<std::list<Edge>> adjacencyList;
+public:
+	~PF_AStar() = default;
+	std::vector<Tile> FindPath(std::map<int, std::list<Edge>>& adjacencyList, int rows, int cols, Tile start, Tile end) override;
+};
+
+#endif

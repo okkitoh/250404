@@ -9,16 +9,6 @@ namespace AMGraph
     int NUMOFVERTS = 0;
 }
 
-struct WeightedEdge
-{
-    int to;
-    int weight;
-
-    bool operator<(const WeightedEdge& other) const {
-        return weight > other.weight;
-    }
-};
-
 
 void AMGraph::Create(int num_of_vertices)
 {
@@ -138,6 +128,7 @@ std::vector<std::vector<int>> AMGraph::ExploreAll()
         }
     }
     delete[] visited;
+    visited = nullptr; // good practice to null out pointers immediately after delete or could have wild pointers
     subgraphs.resize(connectedComponentIndex);
     return subgraphs;
 }
@@ -201,7 +192,7 @@ std::vector<int> AMGraph::Dijkstra(int start, int end)
 {
     // djikstra requires non-negative edge weights from which it prioritizes
     // least resistance. when all weights are 1, you have a BFS
-    std::priority_queue<WeightedEdge> tovisit; // priority queue, sorts in ascending, small to large
+    std::priority_queue<WeightedEdge<int, int>> tovisit; // priority queue, sorts in ascending, small to large
     tovisit.push({start, 0});
 
     std::map<int, int> path;
@@ -211,7 +202,7 @@ std::vector<int> AMGraph::Dijkstra(int start, int end)
     visited[start] = 0;
     while (!tovisit.empty())
     {
-        WeightedEdge edge = tovisit.top();
+        WeightedEdge<int, int> edge = tovisit.top();
         tovisit.pop();
         if (edge.to == end)
         {

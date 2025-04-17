@@ -4,7 +4,7 @@
 #include <map>
 
 #include "MyGraph.h"
-#include "ConcreteAStar.h"
+#include "Pathfinder.h"
 
 
 int main()
@@ -184,7 +184,7 @@ int main()
 
             // need to map (x, y) aka (c, r) to a linear space like an array to use as a map key
             // that is unique for each tile. this is called hashing
-            int index = r * rows + c;
+            int index = r * cols + c;
 
             for (int u = -1; u < 2; ++u)
             {
@@ -207,16 +207,10 @@ int main()
         }
         printf("\n");
     }
+    printf("   y\n");
 
-    printf("   y\n\nverify this is true\n");
-    std::map<int, std::list<Edge>>::iterator ity = driver.begin();
-    for (; ity != driver.end(); ++ity)
-    {
-        int y = ity->first / rows;
-        int x = (ity->first % rows);
-        printf("(%2d,%2d) %2d | neighbors %llu", x, y, ity->first, ity->second.size());
-        printf("\n");
-    }
-
-
+    PathFinder *pathfinder = new PF_AStar();
+    pathfinder->FindPath(driver, rows, cols, {0, 1}, {4, 1});
+    delete pathfinder;
+    pathfinder = nullptr;
 }
