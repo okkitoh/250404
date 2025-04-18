@@ -31,18 +31,16 @@ struct Edge {
 // Using polymorphism to choose which algorithm to execute at runtime
 class PathFinder {
 public:
-	virtual std::vector<Tile> FindPath(std::map<int, std::list<Edge>>& adjacencyList, int rows, int cols, Tile start, Tile end) = 0; // = 0, pure virtual
+	virtual std::vector<Tile> FindPath(std::vector<std::list<Edge>>& adjacencyList, int rows, int cols, Tile start, Tile end) = 0; // = 0, pure virtual
 };
 
 
 
 // Derived Class : A* algorithm
 class PF_AStar : public PathFinder {
-private:
-	std::vector<std::list<Edge>> adjacencyList;
 public:
 	~PF_AStar() = default;
-	std::vector<Tile> FindPath(std::map<int, std::list<Edge>>& adjacencyList, int rows, int cols, Tile start, Tile end) override;
+	std::vector<Tile> FindPath(std::vector<std::list<Edge>>& adjacencyList, int rows, int cols, Tile start, Tile end) override;
 };
 
 #endif

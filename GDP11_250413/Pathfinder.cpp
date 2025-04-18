@@ -6,7 +6,7 @@
 
 // A* algorithm is nothing more than Dijkstra with a heuristic value.
 // In normal people speak, this value is just another cost variable to guide and correct the path
-std::vector<Tile> PF_AStar::FindPath(std::map<int, std::list<Edge>>& adjacencyList, int rows, int cols, Tile start, Tile end)
+std::vector<Tile> PF_AStar::FindPath(std::vector<std::list<Edge>>& adjacencyList, int rows, int cols, Tile start, Tile end)
 {
     std::map<int, double> visited = std::map<int, double>();
 
@@ -35,7 +35,8 @@ std::vector<Tile> PF_AStar::FindPath(std::map<int, std::list<Edge>>& adjacencyLi
             {
                 visited[next] = cost;
                 path[next] = current.to;
-                // manhattan distance as the heuristic
+                // manhattan distance as the heuristic. As a taxi cab drives through manhattan, right angles only
+                // the disadvantage is it does not know about impassable walls. it may get caught exploring crevices 
                 double heuristic = (std::abs(edge.from.x - end.x) + std::abs(edge.from.y - end.y));
                 printf("%d -> %d, c: %f, h: %f, t: %f\n", current.to, next, cost, heuristic, cost + heuristic);
                 tovisit.push(WeightedEdge<int, double> { next, cost + heuristic });

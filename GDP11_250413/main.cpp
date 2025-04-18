@@ -135,8 +135,8 @@ int main()
 
     printf("\n\nCreating a tile based grid with obstacles\n");
     // Assume origin is at top left like raylib
-    int rows = 6; // row is to y
-    int cols = 6; // col is to x
+    const int rows = 6; // row is to y
+    const int cols = 6; // col is to x
     
     const char WALL = '@';
     const char FLOOR = '.';
@@ -154,8 +154,11 @@ int main()
 
     // Map Bake Stage
     // ---------------------------------------------------------------------------------
-    // Create an edge list representation from graph
-    // What we're creating here is an adjacency list
+    // Create an edge list representation from graph an adjacency list.
+    // Array of arrays holding a list of edges to neighbors.
+    // [ 0 ] -> [1, 2]           0
+    // [ 1 ] -> [0, 2]          / \
+    // [ 2 ] -> [0, 1]         2 - 1
     // It is more performant and saves alot of space vs an adjacency matrix
     // By using a map to hold the list we're speeding up look up times. If we needed
     // position 283 in a list, the search would have to start from 0 and iterate to 283.
@@ -164,7 +167,12 @@ int main()
     // std::map uses a self balancing tree (red-black tree) for look ups
     // Like 20 questions, a binary tree can find an answer in 20 questions or less.
     // It has a logarithmic upper bound no matter how large the search space.
-    std::map<int, std::list<Edge>> driver;
+
+    // I'm dumb, use 0(1)
+    //std::map<int, std::list<Edge>> driver;
+
+    std::vector<std::list<Edge>> adjacencyList = std::vector<std::list<Edge>>();
+    adjacencyList.resize(rows * cols);
     std::string header = "\n   +";
     printf("\n   |");
     for (int hr = 0; hr < cols; ++hr)
@@ -201,7 +209,7 @@ int main()
 
                     double cost = abs(u) + abs(v) == 2 ? 1.414 : 1.0;
                     Edge edge = { {c, r}, {nc, nr}, cost };
-                    driver[index].push_back(edge);
+                    adjacencyList[index].push_back(edge);
                 }
             }
         }
@@ -210,7 +218,7 @@ int main()
     printf("   y\n");
 
     PathFinder *pathfinder = new PF_AStar();
-    pathfinder->FindPath(driver, rows, cols, {0, 1}, {4, 1});
+    pathfinder->FindPath(adjacencyList, rows, cols, {0, 1}, {4, 1});
     delete pathfinder;
     pathfinder = nullptr;
 }
