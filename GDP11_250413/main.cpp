@@ -208,7 +208,7 @@ int main()
                         continue;
 
                     double cost = abs(u) + abs(v) == 2 ? 1.414 : 1.0;
-                    Edge edge = { {c, r}, {nc, nr}, cost };
+                    Edge edge = { {nc, nr}, cost };
                     adjacencyList[index].push_back(edge);
                 }
             }

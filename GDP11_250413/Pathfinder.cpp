@@ -1,17 +1,16 @@
 
 #include "Pathfinder.h"
-#include "MyGraph.h"
 
 #include <queue>
 
 // A* algorithm is nothing more than Dijkstra with a heuristic value.
 // In normal people speak, this value is just another cost variable to guide and correct the path
-std::vector<Tile> PF_AStar::FindPath(std::vector<std::list<Edge>>& adjacencyList, int rows, int cols, Tile start, Tile end)
+std::vector<Tile> PF_AStar::FindPath(std::vector<std::list<Edge<Tile>>>& adjacencyList, int rows, int cols, Tile start, Tile end)
 {
     std::map<int, double> visited = std::map<int, double>();
 
-    std::priority_queue<WeightedEdge<int, double>> tovisit;
-    WeightedEdge<int, double> current = { start.y * cols + start.x , 0.0 };
+    std::priority_queue<Edge<int>> tovisit;
+    Edge<int> current = { start.y * cols + start.x , 0.0 };
     tovisit.push(current);
 
     std::map<int, int> path;
@@ -27,7 +26,7 @@ std::vector<Tile> PF_AStar::FindPath(std::vector<std::list<Edge>>& adjacencyList
         if (Tile{ x, y } == end)
             break;
 
-        for (Edge& edge : adjacencyList[current.to])
+        for (Edge<Tile>& edge : adjacencyList[current.to])
         {
             double cost = visited[current.to] + edge.cost;
             int next = edge.to.hash(cols);
@@ -36,10 +35,10 @@ std::vector<Tile> PF_AStar::FindPath(std::vector<std::list<Edge>>& adjacencyList
                 visited[next] = cost;
                 path[next] = current.to;
                 // manhattan distance as the heuristic. As a taxi cab drives through manhattan, right angles only
-                // the disadvantage is it does not know about impassable walls. it may get caught exploring crevices 
-                double heuristic = (std::abs(edge.from.x - end.x) + std::abs(edge.from.y - end.y));
+                // the disadvantage is it does not know about impassable walls. it may get caught exploring crevices
+                double heuristic = (std::abs(x - end.x) + std::abs(y - end.y));
                 printf("%d -> %d, c: %f, h: %f, t: %f\n", current.to, next, cost, heuristic, cost + heuristic);
-                tovisit.push(WeightedEdge<int, double> { next, cost + heuristic });
+                tovisit.push(Edge<int> { next, cost + heuristic });
             }
         }
         iterationCount++;
@@ -66,4 +65,9 @@ std::vector<Tile> PF_AStar::FindPath(std::vector<std::list<Edge>>& adjacencyList
         printf("%d ", track[i]);
     }
     return shortestPath;
+}
+
+std::vector<Tile> PF_Dijkstra::FindPath(std::vector<std::list<Edge<Tile>>>& adjacencyList, int rows, int cols, Tile start, Tile end)
+{
+    return std::vector<Tile>();
 }
