@@ -171,7 +171,7 @@ int main()
     // I'm dumb, use 0(1)
     //std::map<int, std::list<Edge>> driver;
 
-    std::vector<std::list<Edge>> adjacencyList = std::vector<std::list<Edge>>();
+    std::vector<std::list<Edge<Tile>>> adjacencyList = std::vector<std::list<Edge<Tile>>>();
     adjacencyList.resize(rows * cols);
     std::string header = "\n   +";
     printf("\n   |");
@@ -208,7 +208,7 @@ int main()
                         continue;
 
                     double cost = abs(u) + abs(v) == 2 ? 1.414 : 1.0;
-                    Edge edge = { {nc, nr}, cost };
+                    Edge<Tile> edge = { {nc, nr}, cost };
                     adjacencyList[index].push_back(edge);
                 }
             }
