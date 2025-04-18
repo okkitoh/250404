@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <list>
-#include <map>
 
 
 
@@ -40,13 +39,6 @@ public:
 
 
 
-// Derived Class : A* algorithm
-class PF_AStar : public PathFinder {
-public:
-	~PF_AStar() = default;
-	std::vector<Tile> FindPath(std::vector<std::list<Edge<Tile>>>& adjacencyList, int rows, int cols, Tile start, Tile end) override;
-};
-
 // Derived Class : Djikstra algorithm
 class PF_Dijkstra : public PathFinder {
 public:
@@ -54,4 +46,14 @@ public:
 	std::vector<Tile> FindPath(std::vector<std::list<Edge<Tile>>>& adjacencyList, int rows, int cols, Tile start, Tile end) override;
 };
 
+
+
+// Derived Class : A* algorithm
+class PF_AStar : public PathFinder {
+public:
+	~PF_AStar() = default;
+	std::vector<Tile> FindPath(std::vector<std::list<Edge<Tile>>>& adjacencyList, int rows, int cols, Tile start, Tile end) override;
+};
+
 #endif
+

@@ -135,8 +135,8 @@ int main()
 
     printf("\n\nCreating a tile based grid with obstacles\n");
     // Assume origin is at top left like raylib
-    const int rows = 6; // row is to y
-    const int cols = 6; // col is to x
+    const int TILEROWS = 6; // row is to y
+    const int TILECOLS = 6; // col is to x
     
     const char WALL = '@';
     const char FLOOR = '.';
@@ -172,19 +172,19 @@ int main()
     //std::map<int, std::list<Edge>> driver;
 
     std::vector<std::list<Edge<Tile>>> adjacencyList = std::vector<std::list<Edge<Tile>>>();
-    adjacencyList.resize(rows * cols);
+    adjacencyList.resize(TILEROWS * TILECOLS);
     std::string header = "\n   +";
     printf("\n   |");
-    for (int hr = 0; hr < cols; ++hr)
+    for (int hr = 0; hr < TILEROWS; ++hr)
     {
         printf("%3d", hr);
         header += "---";
     }
     std::cout << header << " x\n";
-    for (int r = 0; r < rows; ++r)
+    for (int r = 0; r < TILEROWS; ++r)
     {
         printf("%2d | ", r);
-        for (int c = 0; c < cols; ++c)
+        for (int c = 0; c < TILECOLS; ++c)
         {
             printf("%2c ", TileGraph[r][c]);
             // Goal for scope: for every tile, check each neighbor and see if path exists
@@ -192,7 +192,7 @@ int main()
 
             // need to map (x, y) aka (c, r) to a linear space like an array to use as a map key
             // that is unique for each tile. this is called hashing
-            int index = r * cols + c;
+            int index = r * TILEROWS + c;
 
             for (int u = -1; u < 2; ++u)
             {
@@ -202,7 +202,7 @@ int main()
                         continue;
                     int nr = r + u;
                     int nc = c + v;
-                    if ((nr < 0 || nr >= rows) || (nc < 0 || nc >= cols))
+                    if ((nr < 0 || nr >= TILEROWS) || (nc < 0 || nc >= TILECOLS))
                         continue;
                     if (TileGraph[nr][nc] == WALL)
                         continue;
@@ -218,7 +218,15 @@ int main()
     printf("   y\n");
 
     PathFinder *pathfinder = new PF_AStar();
-    pathfinder->FindPath(adjacencyList, rows, cols, {0, 1}, {4, 1});
+    pathfinder->FindPath(adjacencyList, TILEROWS, TILECOLS, {0, 1}, {4, 1});
+    delete pathfinder;
+    printf("\n\nDijkstra Algorithm");
+    pathfinder = new PF_Dijkstra();
+    std::vector<Tile> path = pathfinder->FindPath(adjacencyList, TILEROWS, TILECOLS, { 0, 1 }, { 4, 1 });
+    for (Tile& t : path)
+    {
+        printf("(%d, %d) ", t.x, t.y);
+    }
     delete pathfinder;
     pathfinder = nullptr;
 }
