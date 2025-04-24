@@ -118,12 +118,11 @@ int main()
  * Defend - Broadcast
  */
 
-using namespace std;
 void ResolveActions(GameState& state, Action characterAction, int target, std::vector<Action> enemyAction)
 {
 	target = std::max(std::min(target, MAX_ENEMIES), 0);
 
-	vector<LogEntry> lmsg = vector<LogEntry>();
+	std::vector<LogEntry> lmsg = std::vector<LogEntry>();
 	BattleResult outcome;
 	if (characterAction == DEFEND)
 	{
@@ -139,7 +138,7 @@ void ResolveActions(GameState& state, Action characterAction, int target, std::v
 		{
 			outcome = ComputeResult(state.MainPlayer, ATTACK, state.Enemy[target], ATTACK);
 			outcome.target->SetHealth(outcome.target->GetHealth() - outcome.damage);
-			lmsg.push_back({ MLOG_INFO, outcome.instigator->GetName() + " attacks " + outcome.target->GetName() + " for " + to_string(outcome.damage) + " damage (" + std::to_string(outcome.target->GetHealth()) + "/" + std::to_string(outcome.target->GetMaxHealth()) + ")", TIMESTAMP});
+			lmsg.push_back({ MLOG_INFO, outcome.instigator->GetName() + " attacks " + outcome.target->GetName() + " for " + std::to_string(outcome.damage) + " damage (" + std::to_string(outcome.target->GetHealth()) + "/" + std::to_string(outcome.target->GetMaxHealth()) + ")", TIMESTAMP});
 		}
 	}
 
@@ -164,9 +163,9 @@ void ResolveActions(GameState& state, Action characterAction, int target, std::v
 		{
 			outcome.target->SetHealth(outcome.target->GetHealth() - outcome.damage);
 		}
-		if (outcome.action == DEFEND) lmsg.push_back({ MLOG_WARNING, outcome.target->GetName() + " defends against " + outcome.instigator->GetName() + "'s attack and takes " + to_string(outcome.damage) + " damage (" + std::to_string(outcome.target->GetHealth()) + "/" + std::to_string(outcome.target->GetMaxHealth()) + ")", TIMESTAMP });
-		if (outcome.action == PARRY) lmsg.push_back({ MLOG_ERROR, outcome.target->GetName() + "'s attack was parried by " + outcome.instigator->GetName() + "! " + outcome.target->GetName() + " takes " + to_string(outcome.damage) + " damage (" + std::to_string(outcome.target->GetHealth()) + "/" + std::to_string(outcome.target->GetMaxHealth()) + ")", TIMESTAMP });
-		if (outcome.action == ATTACK) lmsg.push_back({ MLOG_ERROR, outcome.instigator->GetName() + " attacks " + outcome.target->GetName() + " for " + to_string(outcome.damage) + " damage (" + std::to_string(outcome.target->GetHealth()) + "/" + std::to_string(outcome.target->GetMaxHealth()) + ")", TIMESTAMP });
+		if (outcome.action == DEFEND) lmsg.push_back({ MLOG_WARNING, outcome.target->GetName() + " defends against " + outcome.instigator->GetName() + "'s attack and takes " + std::to_string(outcome.damage) + " damage (" + std::to_string(outcome.target->GetHealth()) + "/" + std::to_string(outcome.target->GetMaxHealth()) + ")", TIMESTAMP });
+		if (outcome.action == PARRY) lmsg.push_back({ (outcome.target->GetName() != state.MainPlayer.GetName() ? MLOG_INFO : MLOG_ERROR), outcome.target->GetName() + "'s attack was parried by " + outcome.instigator->GetName() + "! " + outcome.target->GetName() + " takes " + std::to_string(outcome.damage) + " damage (" + std::to_string(outcome.target->GetHealth()) + "/" + std::to_string(outcome.target->GetMaxHealth()) + ")", TIMESTAMP });
+		if (outcome.action == ATTACK) lmsg.push_back({ MLOG_ERROR, outcome.instigator->GetName() + " attacks " + outcome.target->GetName() + " for " + std::to_string(outcome.damage) + " damage (" + std::to_string(outcome.target->GetHealth()) + "/" + std::to_string(outcome.target->GetMaxHealth()) + ")", TIMESTAMP });
 		if (outcome.action == NONE)
 		{
 			if (enemyAction[i] == DEFEND) lmsg.push_back({ MLOG_DEFAULT, state.Enemy[i].GetName() + " defends. Nothing happens", TIMESTAMP });
