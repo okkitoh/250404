@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GDP11_250413", "GDP11_25041
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GDP11_250420", "GDP11_250420\GDP11_250420.vcxproj", "{E72123D0-5915-418D-B1EC-3BDCD11B7C7B}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "raylib", "raylib\raylib.vcxproj", "{770C26DF-5714-48CA-8C35-7ED22732E190}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -41,6 +43,14 @@ Global
 		{E72123D0-5915-418D-B1EC-3BDCD11B7C7B}.Release|x64.Build.0 = Release|x64
 		{E72123D0-5915-418D-B1EC-3BDCD11B7C7B}.Release|x86.ActiveCfg = Release|Win32
 		{E72123D0-5915-418D-B1EC-3BDCD11B7C7B}.Release|x86.Build.0 = Release|Win32
+		{770C26DF-5714-48CA-8C35-7ED22732E190}.Debug|x64.ActiveCfg = Debug|x64
+		{770C26DF-5714-48CA-8C35-7ED22732E190}.Debug|x64.Build.0 = Debug|x64
+		{770C26DF-5714-48CA-8C35-7ED22732E190}.Debug|x86.ActiveCfg = Debug|Win32
+		{770C26DF-5714-48CA-8C35-7ED22732E190}.Debug|x86.Build.0 = Debug|Win32
+		{770C26DF-5714-48CA-8C35-7ED22732E190}.Release|x64.ActiveCfg = Release|x64
+		{770C26DF-5714-48CA-8C35-7ED22732E190}.Release|x64.Build.0 = Release|x64
+		{770C26DF-5714-48CA-8C35-7ED22732E190}.Release|x86.ActiveCfg = Release|Win32
+		{770C26DF-5714-48CA-8C35-7ED22732E190}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
