@@ -4,9 +4,6 @@
     <Filter Include="Tests">
       <UniqueIdentifier>{05b076c2-00ed-4b9f-bb8d-06b2a4363b7a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="includes">
-      <UniqueIdentifier>{24e1f881-8b0d-47f5-8261-479de9e0e84d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src">
       <UniqueIdentifier>{58337357-35ee-4ecf-af05-7fe19ead3812}</UniqueIdentifier>
     </Filter>
@@ -14,19 +11,40 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{24e1f881-8b0d-47f5-8261-479de9e0e84d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\UI">
+      <UniqueIdentifier>{108a007e-2ed3-4105-969e-ea68cb0a377a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UI">
+      <UniqueIdentifier>{159b1621-8176-4b70-a4eb-4ac3a84ff805}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Character.h">
-      <Filter>includes</Filter>
+      <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Enemy.h">
-      <Filter>includes</Filter>
+      <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Log.h">
-      <Filter>includes</Filter>
+      <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Player.h">
-      <Filter>includes</Filter>
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameState.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Menu.h">
+      <Filter>include\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\View.h">
+      <Filter>include\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Hud.h">
+      <Filter>include\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -45,5 +63,16 @@
     <ClCompile Include="src\Player.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Menu.cpp">
+      <Filter>src\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Hud.cpp">
+      <Filter>src\UI</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\DuelingGame.png">
+      <Filter>rsrc</Filter>
+    </Image>
   </ItemGroup>
 </Project>

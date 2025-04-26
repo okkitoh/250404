@@ -3,16 +3,23 @@
 #include <iostream>
 #include <string>
 
+
+
 Player::Player() : Character()
 {
-
+	// Base Stats
+	this->MaxHealth = 50;
+	this->Health = this->MaxHealth;
+	this->AtkPower = 2;
+	this->Armor = 2;
+	this->Name = "Guy";
+	
 }
 // Passes all arguments to Character Constructor
 Player::Player(int Health, int AtkPower, int Armor, std::string Name) : Character(Health, AtkPower, Armor, Name)
 {
 
 }
-
 Action Player::ChooseAction()
 {
 	int Input;

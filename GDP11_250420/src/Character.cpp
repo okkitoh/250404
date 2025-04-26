@@ -1,6 +1,8 @@
 
 #include "Character.h"
 
+
+
 Character::Character()
 {
 	this->MaxHealth = 0;
@@ -8,6 +10,9 @@ Character::Character()
 	this->AtkPower = 0;
 	this->Armor = 0;
 	this->Name = "";
+	Generator = std::mt19937(std::random_device{}());
+	Distribution.param(std::uniform_int_distribution<>::param_type(0, 2));
+	
 }
 Character::Character(int Health, int AtkPower, int Armor, std::string Name)
 {
@@ -16,6 +21,8 @@ Character::Character(int Health, int AtkPower, int Armor, std::string Name)
 	this->AtkPower = AtkPower;
 	this->Armor = Armor;
 	this->Name = Name;
+	Generator = std::mt19937(std::random_device{}());
+	Distribution.param(std::uniform_int_distribution<>::param_type(0, 2));
 }
 int Character::GetMaxHealth() const
 {

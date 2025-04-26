@@ -1,15 +1,16 @@
 
 #include "Enemy.h"
 
+
+
 Enemy::Enemy() : Character()
 {
-
+	
 }
 // Passes all arguments to Character Constructor
-Enemy::Enemy(int Health, int AtkPower, int Armor, std::string Name) : Character(Health, AtkPower, Armor, Name) //, Generator(std::random_device{}()), Distribution(0, 2)
+Enemy::Enemy(int Health, int AtkPower, int Armor, std::string Name) : Character(Health, AtkPower, Armor, Name)//, Generator(std::random_device{}()), Distribution(0, 2)
 {
-	Generator = std::mt19937(std::random_device{}());
-	Distribution.param(std::uniform_int_distribution<>::param_type(0, 2));
+	Enemy();
 }
 Action Enemy::ChooseAction()
 {

@@ -4,6 +4,9 @@
 #include <string>
 #include <time.h>
 
+#define TIMESTAMP std::chrono::system_clock::to_time_t(std::chrono::system_clock::now())
+
+
 
 enum LogType
 {

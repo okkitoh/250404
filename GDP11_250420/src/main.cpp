@@ -39,25 +39,14 @@
 #include <iostream>
 #include <vector>
 #include <chrono>
+#include "GameState.h"
 #include "Player.h"
 #include "Enemy.h"
 #include "Log.h"
-
+#include "Menu.h"
+#include "Hud.h"
 #include "raylib.h"
 
-#define TIMESTAMP std::chrono::system_clock::to_time_t(std::chrono::system_clock::now())
-
-const int MAX_ENEMIES = 1;
-const int MAX_DIFFICULTY = 5;
-const bool GOD_MODE = 1;
-
-struct GameState
-{
-	int difficulty = 0;
-	Enemy Enemy[MAX_ENEMIES]; // enemy[MAX_ENEMIES]
-	Player MainPlayer;
-};
-static GameState G_game_state = {};
 
 
 struct BattleResult
@@ -68,56 +57,101 @@ struct BattleResult
 	int damage;
 };
 
+static GameState g_gamecontext = {};
+static Camera2D camera = { 0 };
 
 
 void ResolveActions(GameState& state, Action characterAction, int target, std::vector<Action> enemyActionn);
 BattleResult ComputeResult(Character& instigator, Action action1, Character& target, Action action2);
 
+
+
 int main()
 {
-	G_game_state.MainPlayer = Player(5, 2, 2, "Guy");
-	G_game_state.Enemy[0] = Enemy(2, 1, 0, "Slime A");
-	while (G_game_state.MainPlayer.IsAlive())
+	InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, TextFormat("%.0fx%.0f As God Intended", WINDOW_WIDTH, WINDOW_HEIGHT));
+	SetTargetFPS(60);
+
+	g_gamecontext.phase = GAMEPHASE::START_MENU;
+	g_gamecontext.ViewStack.push_back(new Menu(g_gamecontext));
+	//g_gamecontext.phase = GAMEPHASE::GAME_RUNNING;
+	//g_gamecontext.ViewStack.push_back(new Hud(g_gamecontext));
+	g_gamecontext.Enemy[0].IncreaseDifficulty(g_gamecontext.difficulty);
+
+	while (!WindowShouldClose() && g_gamecontext.phase != GAMEPHASE::EXIT)
 	{
-		if (G_game_state.difficulty == MAX_DIFFICULTY)
+		// This is where UI should
+			// Respond to user input 
+			// sync updates with models
+		g_gamecontext.UpdateViews();
+		if (g_gamecontext.playerAction != Action::WAIT)
 		{
-			
+			Action playerInput = g_gamecontext.ConsumePlayerAction();
+			Action EnemyAction = g_gamecontext.Enemy[0].ChooseAction();
+			ResolveActions(g_gamecontext, playerInput, 0, { EnemyAction });
+			if (!g_gamecontext.Enemy[0].IsAlive())
+			{
+				g_gamecontext.Enemy[0].IncreaseDifficulty(++g_gamecontext.difficulty);
+			}
+		}
+		BeginDrawing();
+		{
+			ClearBackground(BLACK);
+			BeginMode2D(camera);
+			// This is where viewport relative objects are drawn e.g. camera shake
+			EndMode2D();
+			// This is where UI should draw (absolute positioning)
+			g_gamecontext.DrawViews();
+			DrawFPS(WINDOW_WIDTH - 90, 10);
+		}
+		EndDrawing();
+
+		if (!g_gamecontext.MainPlayer.IsAlive() || g_gamecontext.difficulty == MAX_DIFFICULTY)
+		{
+			g_gamecontext.phase = GAMEPHASE::GAME_OVER;
+		}
+	}
+	CloseWindow();
+	/*
+	while (g_gamecontext.MainPlayer.IsAlive())
+	{
+		if (g_gamecontext.difficulty == MAX_DIFFICULTY)
+		{
 			std::cout << std::endl << "Game Over.\n\nyeah you win" << std::endl;
 			break;
 		}
 		else
 		{
-			G_game_state.Enemy[0].IncreaseDifficulty(++G_game_state.difficulty);
+			g_gamecontext.Enemy[0].IncreaseDifficulty(++g_gamecontext.difficulty);
 			Log::Separator();
-			Log::LogMessage(MLOG_DEFAULT, "A wild " + G_game_state.Enemy->GetName() + " has appeared!");
+			Log::LogMessage(MLOG_DEFAULT, "A wild " + g_gamecontext.Enemy->GetName() + " has appeared!");
 			Log::Separator();
 		}
-		
-		while (G_game_state.Enemy[0].IsAlive())
+
+		while (g_gamecontext.Enemy[0].IsAlive())
 		{
-			
-			Action PlayerAction = G_game_state.MainPlayer.ChooseAction();
-			Action EnemyAction = G_game_state.Enemy[0].ChooseAction();
+			Action PlayerAction = g_gamecontext.MainPlayer.ChooseAction();
+			Action EnemyAction = g_gamecontext.Enemy[0].ChooseAction();
 			std::cout << "Player: " << PlayerAction << std::endl;
 			std::cout << "Enemy: " << EnemyAction << std::endl;
-			ResolveActions(G_game_state, PlayerAction, 0, { EnemyAction });
-			if (!G_game_state.MainPlayer.IsAlive())
+			ResolveActions(g_gamecontext, PlayerAction, 0, { EnemyAction });
+			if (!g_gamecontext.MainPlayer.IsAlive())
 			{
-				Log::LogMessage(MLOG_ERROR, "\n" + G_game_state.MainPlayer.GetName() + " falls in battle\nGame Over.\n");
+				Log::LogMessage(MLOG_ERROR, "\n" + g_gamecontext.MainPlayer.GetName() + " falls in battle\nGame Over.\n");
 				return EXIT_SUCCESS;
 			}
 		}
 
-		Log::LogMessage(MLOG_DEFAULT, "\n" + G_game_state.Enemy[0].GetName() + " was defeated!\n");
+		Log::LogMessage(MLOG_DEFAULT, "\n" + g_gamecontext.Enemy[0].GetName() + " was defeated!\n");
 	}
+	*/
 	return EXIT_SUCCESS;
 }
+
 /* Player Perspective
  * Attack - Unicast
  * Parry  - Unicast
  * Defend - Broadcast
  */
-
 void ResolveActions(GameState& state, Action characterAction, int target, std::vector<Action> enemyAction)
 {
 	target = std::max(std::min(target, MAX_ENEMIES), 0);
@@ -149,7 +183,6 @@ void ResolveActions(GameState& state, Action characterAction, int target, std::v
 		{
 			continue;
 		}
-
 		if (characterAction != DEFEND && i != target)
 		{
 			characterTargetAction = NONE;

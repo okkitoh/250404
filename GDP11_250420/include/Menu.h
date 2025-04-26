@@ -1,0 +1,24 @@
+#pragma once
+
+#include <map>
+#include <functional>
+#include <string>
+#include "GameState.h"
+#include "View.h"
+
+
+
+
+class Menu : public View
+{
+public:
+	Menu();
+	Menu(GameState &context);
+	void AddOption(std::string label, std::function<void()> callback);
+	void Update();
+	void GuiDraw();
+protected:
+	int cursor;
+	std::vector<std::string> optionsOrder;
+	std::unordered_map<std::string, std::function<void()>> options;
+};

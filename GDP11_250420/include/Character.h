@@ -2,8 +2,13 @@
 
 #include <string>
 #include <iostream>
+#include <random>
+
+
+
 enum Action
 {
+	WAIT,
 	ATTACK,
 	PARRY,
 	DEFEND,
@@ -50,4 +55,6 @@ protected:
 	int AtkPower;
 	int Armor;
 	std::string Name;
+	std::mt19937 Generator;
+	std::uniform_int_distribution<> Distribution;
 };

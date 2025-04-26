@@ -3,6 +3,7 @@
 #include <iostream>
 
 
+
 std::vector<LogEntry> Log::LogEntries;
 //void Log::Message(const std::string& message)
 //{

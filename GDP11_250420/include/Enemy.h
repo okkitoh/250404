@@ -1,7 +1,8 @@
 #pragma once
 
-#include <random>
 #include "Character.h"
+
+
 
 class Enemy : public Character
 {
@@ -12,7 +13,7 @@ public:
 
 	Action ChooseAction() override;
 
-private:
-	std::mt19937 Generator;
-	std::uniform_int_distribution<> Distribution;
+//private:
+//	std::mt19937 Generator;
+//	std::uniform_int_distribution<> Distribution;
 };
