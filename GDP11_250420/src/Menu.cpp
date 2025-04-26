@@ -18,8 +18,12 @@ Menu::Menu(GameState& context)
 	active = true;
 	options.clear();
 	AddOption("Start Game", [&context]() {
-		context.ViewStack.clear();
+		context.ClearViews();
 		context.ViewStack.push_back(new Hud(context));
+		context.difficulty = 1;
+		context.MainPlayer = Player();
+		context.Enemy[0] = Enemy();
+		context.Enemy[0].IncreaseDifficulty(context.difficulty);
 		context.phase = GAMEPHASE::GAME_RUNNING;
 	});
 	AddOption("Exit", [&context]() {

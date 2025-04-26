@@ -45,6 +45,7 @@
 #include "Log.h"
 #include "Menu.h"
 #include "Hud.h"
+#include "GameOverView.h"
 #include "raylib.h"
 
 
@@ -73,10 +74,14 @@ int main()
 
 	g_gamecontext.phase = GAMEPHASE::START_MENU;
 	g_gamecontext.ViewStack.push_back(new Menu(g_gamecontext));
+
+	//DEBUG game screen
 	//g_gamecontext.phase = GAMEPHASE::GAME_RUNNING;
 	//g_gamecontext.ViewStack.push_back(new Hud(g_gamecontext));
 	g_gamecontext.Enemy[0].IncreaseDifficulty(g_gamecontext.difficulty);
 
+	// DEBUG gameover screen
+	//g_gamecontext.MainPlayer.SetHealth(0);
 	while (!WindowShouldClose() && g_gamecontext.phase != GAMEPHASE::EXIT)
 	{
 		// This is where UI should
@@ -93,6 +98,16 @@ int main()
 				g_gamecontext.Enemy[0].IncreaseDifficulty(++g_gamecontext.difficulty);
 			}
 		}
+		if (g_gamecontext.phase == GAMEPHASE::GAME_OVER)
+		{
+			if (IsKeyPressed(KEY_Z) || IsKeyPressed(KEY_ENTER))
+			{
+				g_gamecontext.phase = GAMEPHASE::START_MENU;
+				g_gamecontext.ClearViews();
+				g_gamecontext.ViewStack.push_back(new Menu(g_gamecontext));
+				g_gamecontext.MainPlayer.SetHealth(1);
+			}
+		}
 		BeginDrawing();
 		{
 			ClearBackground(BLACK);
@@ -107,7 +122,13 @@ int main()
 
 		if (!g_gamecontext.MainPlayer.IsAlive() || g_gamecontext.difficulty == MAX_DIFFICULTY)
 		{
-			g_gamecontext.phase = GAMEPHASE::GAME_OVER;
+			if (g_gamecontext.phase != GAMEPHASE::GAME_OVER)
+			{
+				g_gamecontext.phase = GAMEPHASE::GAME_OVER;
+				g_gamecontext.ClearViews();
+				g_gamecontext.ViewStack.push_back(new GameOverView(g_gamecontext));
+				g_gamecontext.playerAction = Action::WAIT;
+			}
 		}
 	}
 	CloseWindow();

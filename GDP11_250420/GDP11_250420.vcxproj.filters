@@ -46,6 +46,12 @@
     <ClInclude Include="include\Hud.h">
       <Filter>include\UI</Filter>
     </ClInclude>
+    <ClInclude Include="include\GameOverView.h">
+      <Filter>include\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Sprites.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Character.cpp">
@@ -68,6 +74,12 @@
     </ClCompile>
     <ClCompile Include="src\Hud.cpp">
       <Filter>src\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameOverView.cpp">
+      <Filter>src\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sprites.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

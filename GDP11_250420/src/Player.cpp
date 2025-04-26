@@ -8,7 +8,7 @@
 Player::Player() : Character()
 {
 	// Base Stats
-	this->MaxHealth = 50;
+	this->MaxHealth = 5;
 	this->Health = this->MaxHealth;
 	this->AtkPower = 2;
 	this->Armor = 2;

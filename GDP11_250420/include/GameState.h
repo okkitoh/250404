@@ -42,6 +42,15 @@ struct GameState
 		this->playerAction = Action::WAIT;
 		return temp;
 	}
+	inline void ClearViews()
+	{
+		while (!ViewStack.empty())
+		{
+			View* temp = ViewStack.back();
+			ViewStack.pop_back();
+			delete temp;
+		}
+	}
 
 	inline void UpdateViews()
 	{
