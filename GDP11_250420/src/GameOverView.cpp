@@ -1,17 +1,22 @@
 
 #include "GameOverView.h"
-#include "Menu.h"
+#include "GameState.h"
+#include "StartMenu.h"
 #include "Sprites.h"
 #include "raylib.h"
 
 
 
-GameOverView::GameOverView(GameState& context)
+GameOverView::GameOverView()
 {
-	this->context = &context;
 }
 void GameOverView::Update()
 {
+	if (GetKeyPressed())
+	{
+		this->Invalidate(); // mark self for deletion later in main loop
+		GameState::GetRef().PushView(new StartMenu());
+	}
 }
 void GameOverView::GuiDraw()
 {
@@ -19,7 +24,7 @@ void GameOverView::GuiDraw()
 	DrawTextureEx(graveSprite, { (WINDOW_WIDTH / 2.f) - (256.f * 3.f / 2.f), -20.f }, 0, 3, WHITE);
 	int size = 9 * 32;
 	DrawText("Game Over", (WINDOW_WIDTH - (size/2.f)) / 2.f, (WINDOW_HEIGHT / 8.f), 32, RED);
-	const char* text = TextFormat("%s falls in battle", context->MainPlayer.GetName().c_str());
+	const char* text = TextFormat("%s falls in battle", GameState::GetRef().MainPlayer.GetName().c_str());
 	size = (std::strlen(text) - 1) * 32;
 	DrawText(text, (WINDOW_WIDTH - (size / 2.f)) / 2.f, (WINDOW_HEIGHT / 8.f) + 60.f, 32, RAYWHITE);
 

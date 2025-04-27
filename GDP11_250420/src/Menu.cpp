@@ -9,26 +9,7 @@
 Menu::Menu()
 {
 	cursor = 0;
-	active = true;
 	options.clear();
-}
-Menu::Menu(GameState& context)
-{
-	cursor = 0;
-	active = true;
-	options.clear();
-	AddOption("Start Game", [&context]() {
-		context.ClearViews();
-		context.ViewStack.push_back(new Hud(context));
-		context.difficulty = 1;
-		context.MainPlayer = Player();
-		context.Enemy[0] = Enemy();
-		context.Enemy[0].IncreaseDifficulty(context.difficulty);
-		context.phase = GAMEPHASE::GAME_RUNNING;
-	});
-	AddOption("Exit", [&context]() {
-		context.phase = GAMEPHASE::EXIT;
-	});
 }
 void Menu::AddOption(std::string label, std::function<void()> callback)
 {
@@ -60,20 +41,7 @@ void Menu::Update()
 
 	}
 }
-void Menu::GuiDraw()
-{
-	int xpos = 60;
-	int ypos = WINDOW_HEIGHT - 140;
-	for (int i = 0; i < optionsOrder.size(); ++i)
-	{
-		if (cursor == i)
-		{
-			DrawTriangle({ xpos + 18.f, (float)ypos }, { xpos + 18.f, (float)ypos + 20 }, { xpos + 38.f, (float)ypos + 10 }, RED);
-		}
-		DrawText(optionsOrder[i].c_str(), xpos + 60, ypos, 18, WHITE);
-		ypos += 40;
-	}
-}
+
 
 
 

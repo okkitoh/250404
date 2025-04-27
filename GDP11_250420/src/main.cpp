@@ -39,32 +39,24 @@
 #include <iostream>
 #include <vector>
 #include <chrono>
+#include "DGDef.h"
+#include "Log.h"
 #include "GameState.h"
 #include "Player.h"
 #include "Enemy.h"
-#include "Log.h"
-#include "Menu.h"
+
+#include "StartMenu.h"
 #include "Hud.h"
 #include "GameOverView.h"
 #include "raylib.h"
 
 
 
-struct BattleResult
-{
-	Character* instigator;
-	Character* target;
-	Action action;
-	int damage;
-};
-
-static GameState g_gamecontext = {};
 static Camera2D camera = { 0 };
 
 
-void ResolveActions(GameState& state, Action characterAction, int target, std::vector<Action> enemyActionn);
-BattleResult ComputeResult(Character& instigator, Action action1, Character& target, Action action2);
-
+void ResolveActions(GameState& state, EAction characterAction, int target, std::vector<EAction> enemyActionn);
+BattleResult ComputeResult(Character& instigator, EAction action1, Character& target, EAction action2);
 
 
 int main()
@@ -72,42 +64,45 @@ int main()
 	InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, TextFormat("%.0fx%.0f As God Intended", WINDOW_WIDTH, WINDOW_HEIGHT));
 	SetTargetFPS(60);
 
-	g_gamecontext.phase = GAMEPHASE::START_MENU;
-	g_gamecontext.ViewStack.push_back(new Menu(g_gamecontext));
+	GameState::GetRef().phase = EViewContext::START_MENU;
+	GameState::GetRef().PushView(new StartMenu());
 
 	//DEBUG game screen
-	//g_gamecontext.phase = GAMEPHASE::GAME_RUNNING;
+	//g_gamecontext.phase = EViewContext::GAME_RUNNING;
 	//g_gamecontext.ViewStack.push_back(new Hud(g_gamecontext));
-	g_gamecontext.Enemy[0].IncreaseDifficulty(g_gamecontext.difficulty);
+	//GameState::GetRef().Enemy[0].IncreaseDifficulty(GameState::GetRef().difficulty);
 
 	// DEBUG gameover screen
 	//g_gamecontext.MainPlayer.SetHealth(0);
-	while (!WindowShouldClose() && g_gamecontext.phase != GAMEPHASE::EXIT)
+	while (!WindowShouldClose() && GameState::GetRef().IsRunning())
 	{
+
 		// This is where UI should
 			// Respond to user input 
 			// sync updates with models
-		g_gamecontext.UpdateViews();
-		if (g_gamecontext.playerAction != Action::WAIT)
-		{
-			Action playerInput = g_gamecontext.ConsumePlayerAction();
-			Action EnemyAction = g_gamecontext.Enemy[0].ChooseAction();
-			ResolveActions(g_gamecontext, playerInput, 0, { EnemyAction });
-			if (!g_gamecontext.Enemy[0].IsAlive())
-			{
-				g_gamecontext.Enemy[0].IncreaseDifficulty(++g_gamecontext.difficulty);
-			}
-		}
-		if (g_gamecontext.phase == GAMEPHASE::GAME_OVER)
-		{
-			if (IsKeyPressed(KEY_Z) || IsKeyPressed(KEY_ENTER))
-			{
-				g_gamecontext.phase = GAMEPHASE::START_MENU;
-				g_gamecontext.ClearViews();
-				g_gamecontext.ViewStack.push_back(new Menu(g_gamecontext));
-				g_gamecontext.MainPlayer.SetHealth(1);
-			}
-		}
+		//if (GameState::GetRef().playerAction != Action::IDLE)
+		//{
+		//	Action playerInput = GameState::GetRef().ConsumePlayerAction();
+		//	Action EnemyAction = GameState::GetRef().Enemy[0].ChooseAction();
+		//	ResolveActions(GameState::GetRef(), playerInput, 0, { EnemyAction });
+		//	if (!GameState::GetRef().Enemy[0].IsAlive())
+		//	{
+		//		GameState::GetRef().Enemy[0].IncreaseDifficulty(++GameState::GetRef().difficulty);
+		//	}
+		//}
+		//if (GameState::GetRef().phase == EViewContext::GAME_OVER)
+		//{
+		//	if (IsKeyPressed(KEY_Z) || IsKeyPressed(KEY_ENTER))
+		//	{
+		//		GameState::GetRef().phase = EViewContext::START_MENU;
+		//		GameState::GetRef().ClearViews();
+		//		GameState::GetRef().ViewStack.push_back(new Menu(GameState::GetRef()));
+		//		GameState::GetRef().MainPlayer.SetHealth(1);
+		//	}
+		//}
+		GameState::GetRef().UpdateViews();
+
+
 		BeginDrawing();
 		{
 			ClearBackground(BLACK);
@@ -115,21 +110,21 @@ int main()
 			// This is where viewport relative objects are drawn e.g. camera shake
 			EndMode2D();
 			// This is where UI should draw (absolute positioning)
-			g_gamecontext.DrawViews();
+			GameState::GetRef().DrawViews();
 			DrawFPS(WINDOW_WIDTH - 90, 10);
 		}
 		EndDrawing();
 
-		if (!g_gamecontext.MainPlayer.IsAlive() || g_gamecontext.difficulty == MAX_DIFFICULTY)
-		{
-			if (g_gamecontext.phase != GAMEPHASE::GAME_OVER)
-			{
-				g_gamecontext.phase = GAMEPHASE::GAME_OVER;
-				g_gamecontext.ClearViews();
-				g_gamecontext.ViewStack.push_back(new GameOverView(g_gamecontext));
-				g_gamecontext.playerAction = Action::WAIT;
-			}
-		}
+		//if (!GameState::GetRef().MainPlayer.IsAlive() || GameState::GetRef().difficulty == MAX_DIFFICULTY)
+		//{
+		//	if (GameState::GetRef().phase != EViewContext::GAME_OVER)
+		//	{
+		//		GameState::GetRef().phase = EViewContext::GAME_OVER;
+		//		GameState::GetRef().ClearViews();
+		//		GameState::GetRef().ViewStack.push_back(new GameOverView(GameState::GetRef()));
+		//		GameState::GetRef().playerAction = Action::IDLE;
+		//	}
+		//}
 	}
 	CloseWindow();
 	/*
@@ -173,7 +168,7 @@ int main()
  * Parry  - Unicast
  * Defend - Broadcast
  */
-void ResolveActions(GameState& state, Action characterAction, int target, std::vector<Action> enemyAction)
+void ResolveActions(GameState& state, EAction characterAction, int target, std::vector<EAction> enemyAction)
 {
 	target = std::max(std::min(target, MAX_ENEMIES), 0);
 
@@ -197,7 +192,7 @@ void ResolveActions(GameState& state, Action characterAction, int target, std::v
 		}
 	}
 
-	Action characterTargetAction;
+	EAction characterTargetAction;
 	for (int i = 0; i < MAX_ENEMIES; ++i)
 	{
 		if (!state.Enemy[i].IsAlive())
@@ -233,7 +228,7 @@ void ResolveActions(GameState& state, Action characterAction, int target, std::v
 	}
 }
 // Answers question what happens to instigator's action when target does blah
-BattleResult ComputeResult(Character& instigator, Action action1, Character& target, Action action2)
+BattleResult ComputeResult(Character& instigator, EAction action1, Character& target, EAction action2)
 {
 	
 	BattleResult res = {};

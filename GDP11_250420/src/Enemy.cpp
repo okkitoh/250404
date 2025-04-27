@@ -12,7 +12,7 @@ Enemy::Enemy(int Health, int AtkPower, int Armor, std::string Name) : Character(
 {
 	Enemy();
 }
-Action Enemy::ChooseAction()
+EAction Enemy::ChooseAction()
 {
 	int ActionInput = Distribution(Generator);
 	return GetActionFromInput(ActionInput);

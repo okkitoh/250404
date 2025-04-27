@@ -57,14 +57,14 @@ void Character::SetArmor(int Armor)
 	this->Armor = Armor;
 }
 
-Action Character::GetActionFromInput(int Input)
+EAction Character::GetActionFromInput(int Input)
 {
 	switch (Input)
 	{
-	case 0: return Action::ATTACK;
-	case 1: return Action::PARRY;
-	case 2: return Action::DEFEND;
-	default:return Action::NONE;
+	case 0: return EAction::ATTACK;
+	case 1: return EAction::PARRY;
+	case 2: return EAction::DEFEND;
+	default:return EAction::NONE;
 		// case 0:
 		//	return "Attack";
 		// case 1:

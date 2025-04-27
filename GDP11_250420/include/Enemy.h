@@ -11,7 +11,7 @@ public:
 	Enemy(int Health, int AtkPower, int Armor, std::string Name);
 	void IncreaseDifficulty(int RoundNumber);
 
-	Action ChooseAction() override;
+	EAction ChooseAction() override;
 
 //private:
 //	std::mt19937 Generator;

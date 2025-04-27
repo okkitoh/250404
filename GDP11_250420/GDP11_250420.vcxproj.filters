@@ -52,6 +52,12 @@
     <ClInclude Include="include\Sprites.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\StartMenu.h">
+      <Filter>include\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DGDef.h">
+      <Filter>include\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Character.cpp">
@@ -80,6 +86,9 @@
     </ClCompile>
     <ClCompile Include="src\Sprites.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\StartMenu.cpp">
+      <Filter>src\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

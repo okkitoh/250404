@@ -20,7 +20,7 @@ Player::Player(int Health, int AtkPower, int Armor, std::string Name) : Characte
 {
 
 }
-Action Player::ChooseAction()
+EAction Player::ChooseAction()
 {
 	int Input;
 	while (true)

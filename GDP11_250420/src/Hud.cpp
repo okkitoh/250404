@@ -1,28 +1,26 @@
 
 #include "Hud.h"
+#include "GameState.h"
 #include "raylib.h"
 #include "raymath.h"
 
 
 
-Hud::Hud(GameState &context) : Menu()
+
+Hud::Hud() : Menu()
 {
 	cursorX = 0;
 	cursorY = 0;
-	this->context = &context;
-	AddOption("Attack", [&context]() {
-		context.SetPlayerAction(Action::ATTACK);
+	AddOption("Attack", []() {
 		printf("Player is attacking\n");
 	});
-	AddOption("Parry", [&context]() {
+	AddOption("Parry", []() {
 		printf("Player assumes a parry stance\n");
-		context.SetPlayerAction(Action::PARRY);
 	});
-	AddOption("Defend", [&context]() {
+	AddOption("Defend", []() {
 		printf("Player assumes a defensive stance\n");
-		context.SetPlayerAction(Action::DEFEND);
 	});
-	AddOption("Items", [&context]() {
+	AddOption("Items", []() {
 		printf("Show item menu\n");
 	});
 }
@@ -69,10 +67,10 @@ void Hud::Update()
 void Hud::GuiDraw()
 {
 	DrawText("HP", 18, 18, 18, WHITE);
-	float HP_size = 200 / context->MainPlayer.GetMaxHealth();
-	DrawRectangle(60, 18, HP_size * context->MainPlayer.GetHealth(), 18, RED);
-	DrawRectangle(60, 18, HP_size * context->MainPlayer.GetMaxHealth(), 18, Color{ 230, 41, 55, 56 });
-	DrawText(TextFormat("%d / %d", context->MainPlayer.GetHealth(), context->MainPlayer.GetMaxHealth()), 128, 18, 18, WHITE);
+	float HP_size = 200 / GameState::GetRef().MainPlayer.GetMaxHealth();
+	DrawRectangle(60, 18, HP_size * GameState::GetRef().MainPlayer.GetHealth(), 18, RED);
+	DrawRectangle(60, 18, HP_size * GameState::GetRef().MainPlayer.GetMaxHealth(), 18, Color{ 230, 41, 55, 56 });
+	DrawText(TextFormat("%d / %d", GameState::GetRef().MainPlayer.GetHealth(), GameState::GetRef().MainPlayer.GetMaxHealth()), 128, 18, 18, WHITE);
 
 	float viewY = WINDOW_HEIGHT - 200;
 	float viewX = 280;

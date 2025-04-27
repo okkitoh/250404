@@ -9,7 +9,11 @@ class Player : public Character
 public:
 	Player();
 	Player(int Health, int AtkPower, int Armor, std::string Name);
-	Action ChooseAction() override;
+	void Reset()
+	{
+		SetHealth(GetMaxHealth());
+	}
+	EAction ChooseAction() override;
 };
 
 

@@ -8,9 +8,7 @@
 class GameOverView : public View
 {
 public:
-	GameOverView(GameState &context);
+	GameOverView();
 	void Update();
 	void GuiDraw();
-private:
-	GameState *context;
 };

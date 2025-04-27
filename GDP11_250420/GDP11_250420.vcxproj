@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Character.h" />
+    <ClInclude Include="include\DGDef.h" />
     <ClInclude Include="include\Enemy.h" />
     <ClInclude Include="include\GameOverView.h" />
     <ClInclude Include="include\GameState.h" />
@@ -28,6 +29,7 @@
     <ClInclude Include="include\Menu.h" />
     <ClInclude Include="include\Player.h" />
     <ClInclude Include="include\Sprites.h" />
+    <ClInclude Include="include\StartMenu.h" />
     <ClInclude Include="include\View.h" />
   </ItemGroup>
   <ItemGroup>
@@ -40,6 +42,7 @@
     <ClCompile Include="src\Menu.cpp" />
     <ClCompile Include="src\Player.cpp" />
     <ClCompile Include="src\Sprites.cpp" />
+    <ClCompile Include="src\StartMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\DuelingGame.png" />
