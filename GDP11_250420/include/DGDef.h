@@ -41,7 +41,6 @@ typedef struct BattleResult
 	EAction action;
 	EAction result;
 	int damage;
-	std::function<void()> callback;
 } BattleResult;
 
 

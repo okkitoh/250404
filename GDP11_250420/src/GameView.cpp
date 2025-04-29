@@ -72,6 +72,15 @@ void GameView::GuiDraw()
 	DrawRectangle(60, 18, HP_size * GameState::GetRef().MainPlayer.GetMaxHealth(), 18, Color{ 230, 41, 55, 56 });
 	DrawText(TextFormat("%d / %d", GameState::GetRef().MainPlayer.GetHealth(), GameState::GetRef().MainPlayer.GetMaxHealth()), 128, 18, 18, WHITE);
 
+	const Enemy& enemy = GameState::GetRef().Enemies[0];
+	std::string roundNumberLabel = "Round " + std::to_string(GameState::GetRef().difficulty);
+	int labelSize = MeasureText(roundNumberLabel.c_str(), 32) / 2;
+	DrawText(roundNumberLabel.c_str(), WINDOW_WIDTH / 2 - labelSize, 32, 32, WHITE);
+
+	int namesize = MeasureText(enemy.GetName().c_str(), 32) / 2;
+	std::cout << namesize << std::endl;
+	DrawText(enemy.GetName().c_str(), WINDOW_WIDTH / 2.f - namesize, 72, 32, WHITE);
+
 	float viewY = WINDOW_HEIGHT - 200;
 	float viewX = 280;
 	float spacingV = 100;
