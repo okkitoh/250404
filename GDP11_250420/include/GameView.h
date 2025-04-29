@@ -2,10 +2,12 @@
 
 #include "Menu.h"
 
-class Hud : public Menu
+
+
+class GameView : public Menu
 {
 public:
-	Hud();
+	GameView();
 	void Update();
 	void GuiDraw();
 private:

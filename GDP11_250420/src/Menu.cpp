@@ -1,6 +1,5 @@
 
 #include "Menu.h"
-#include "Hud.h"
 #include "raylib.h"
 #include <vector>
 

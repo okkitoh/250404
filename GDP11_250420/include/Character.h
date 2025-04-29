@@ -5,6 +5,7 @@
 #include "DGDef.h"
 
 
+
 class Character
 {
 public:

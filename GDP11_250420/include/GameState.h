@@ -11,6 +11,10 @@
 struct GameState
 {
 // Secret Forbidden Technique: Singleton Pattern
+// Anti-pattern that seeps into every part of the codebase (find all references on GetRef() D:)
+// Makes testing extremely difficult requiring a dependency injection alternative (DI is the next evolutionary step from singletons)
+// The upside is easy brute force solution for small projects
+// TODO move view system into a view manager object. one ui view manager per player on a controller object which is what UE prefers.
 private:
 	GameState() : difficulty(1), playerAction(EAction::IDLE) {}
 public:
@@ -24,27 +28,33 @@ public:
 	}
 	~GameState()
 	{
-		printf("game state destructor\n");
+		printf("game state destructor. saving...\n");
 	}
 
 	// PREVENT DUPLICATION
 	GameState(const GameState& other) = delete; // disable copy constructor
 	void operator=(const GameState& other) = delete; // disable assignment
+	/* END SINGLETON DEF */
 
 
-
+	/* View Management */
 public:
+	std::vector<View*> ViewStack; // TODO make this private
+
+
+private:
 	EViewContext phase = START_MENU;
-	std::vector<View *> ViewStack;
+public:
+	
 	int difficulty = 1;
-	Enemy Enemy[MAX_ENEMIES];
+	Enemy Enemies[MAX_ENEMIES];
 	Player MainPlayer;
-	EAction playerAction = EAction::IDLE; // ideally should be a message queue but seems abit overkill for this
+	EAction playerAction = EAction::IDLE; // ideally should be a message queue but seems abit overkill in turned-based. only ever 2 actions, confirm/cancel 
 	inline void NewGame()
 	{
 		difficulty = 1;
 		this->MainPlayer.Reset();
-		Enemy[0].IncreaseDifficulty(difficulty);
+		Enemies[0].IncreaseDifficulty(difficulty);
 		SetPhase(EViewContext::START_MENU);
 	}
 	inline void SetPhase(EViewContext phase)
@@ -63,14 +73,25 @@ public:
 	{
 		this->playerAction = playerAction;
 	}
+	inline EAction PeekPlayerAction()
+	{
+		return this->playerAction;
+	}
 	inline EAction ConsumePlayerAction()
 	{
 		EAction temp = this->playerAction;
 		this->playerAction = EAction::IDLE;
 		return temp;
 	}
-
-	inline void PushView(View *view)
+	inline void PopView()
+	{
+		if (!ViewStack.empty())
+		{
+			ViewStack.back()->SetActive(false);
+			ViewStack.back()->Invalidate();
+		}
+	}
+	inline void PushView(View* view)
 	{
 		if (!ViewStack.empty())
 		{
@@ -78,42 +99,57 @@ public:
 		}
 		view->SetActive(true);
 		ViewStack.push_back(view);
-
 	}
-	inline void PruneViews()
+	inline void ClearViews()
 	{
-		for (int i = ViewStack.size() -1; i >= 0; --i)
+		if (ViewStack.empty())
 		{
-			if (!ViewStack[i]->IsValid())
-			{
-				delete ViewStack[i];
-				ViewStack.erase(ViewStack.begin() + i);
-			}
+			return;
+		}
+		auto it = ViewStack.begin();
+		while (it != ViewStack.end())
+		{
+			(*it)->Invalidate();
+			++it;
 		}
 	}
 	inline void UpdateViews()
 	{
-		// c++ polymorphism check which derived class
-
-		// update with first active top of stack 
 		for (int i = ViewStack.size() - 1; i >= 0; --i)
 		{
 			if (ViewStack[i]->IsActive())
 			{
 				ViewStack[i]->Update();
-				break;
 			}
 		}
 		PruneViews();
 	}
-	inline void DrawViews()
+	inline void GUIDrawViews()
 	{
 		for (int i = 0; i < ViewStack.size(); ++i)
 		{
-			if (ViewStack[i]->IsActive())
+			if (ViewStack[i]->IsValid())
 			{
 				ViewStack[i]->GuiDraw();
 			}
+		}
+	}
+private:
+	inline void PruneViews()
+	{
+		bool pruned = false;
+		for (int i = ViewStack.size() - 1; i >= 0; --i)
+		{
+			if (!ViewStack[i]->IsValid())
+			{
+				pruned = true;
+				delete ViewStack[i];
+				ViewStack.erase(ViewStack.begin() + i);
+			}
+		}
+		if (pruned && ViewStack.size())
+		{
+			ViewStack.back()->SetActive(true);
 		}
 	}
 };

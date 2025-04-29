@@ -21,10 +21,11 @@
   <ItemGroup>
     <ClInclude Include="include\Character.h" />
     <ClInclude Include="include\DGDef.h" />
+    <ClInclude Include="include\Dialogue.h" />
     <ClInclude Include="include\Enemy.h" />
     <ClInclude Include="include\GameOverView.h" />
     <ClInclude Include="include\GameState.h" />
-    <ClInclude Include="include\Hud.h" />
+    <ClInclude Include="include\GameView.h" />
     <ClInclude Include="include\Log.h" />
     <ClInclude Include="include\Menu.h" />
     <ClInclude Include="include\Player.h" />
@@ -34,9 +35,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Character.cpp" />
+    <ClCompile Include="src\Dialogue.cpp" />
     <ClCompile Include="src\Enemy.cpp" />
     <ClCompile Include="src\GameOverView.cpp" />
-    <ClCompile Include="src\Hud.cpp" />
+    <ClCompile Include="src\GameView.cpp" />
     <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Menu.cpp" />

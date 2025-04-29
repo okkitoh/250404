@@ -2,10 +2,8 @@
 #include "StartMenu.h"
 #include "raylib.h"
 #include "GameState.h"
-#include "Hud.h"
+#include "GameView.h"
 
-//Testing only
-#include "GameOverView.h"
 
 
 StartMenu::StartMenu() : Menu()
@@ -13,17 +11,8 @@ StartMenu::StartMenu() : Menu()
 	AddOption("Start Game", [this]() {
 		GameState::GetRef().NewGame();
 		GameState::GetRef().SetPhase(EViewContext::GAME_RUNNING);
-		GameState::GetRef().PushView(new GameOverView());
-		this->Invalidate();
-		/*
-		context.ClearViews();
-		context.ViewStack.push_back(new Hud(context));
-		context.difficulty = 1;
-		context.MainPlayer = Player();
-		context.Enemy[0] = Enemy();
-		context.Enemy[0].IncreaseDifficulty(context.difficulty);
-		context.phase = EViewContext::GAME_RUNNING;
-		*/
+		GameState::GetRef().PopView();
+		GameState::GetRef().PushView(new GameView());
 	});
 	AddOption("Exit", []() {
 		GameState::GetRef().SetPhase(EViewContext::EXIT);

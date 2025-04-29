@@ -20,6 +20,12 @@
     <Filter Include="src\UI">
       <UniqueIdentifier>{159b1621-8176-4b70-a4eb-4ac3a84ff805}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\UI\Base">
+      <UniqueIdentifier>{d401ad03-13fe-4c9f-a332-cf7b37da7950}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UI\Base">
+      <UniqueIdentifier>{32566a2b-751a-4711-91f0-3bf157c64008}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Character.h">
@@ -37,13 +43,7 @@
     <ClInclude Include="include\GameState.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\Menu.h">
-      <Filter>include\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="include\View.h">
-      <Filter>include\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Hud.h">
+    <ClInclude Include="include\GameView.h">
       <Filter>include\UI</Filter>
     </ClInclude>
     <ClInclude Include="include\GameOverView.h">
@@ -56,7 +56,16 @@
       <Filter>include\UI</Filter>
     </ClInclude>
     <ClInclude Include="include\DGDef.h">
-      <Filter>include\UI</Filter>
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\View.h">
+      <Filter>include\UI\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Dialogue.h">
+      <Filter>include\UI\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Menu.h">
+      <Filter>include\UI\Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -75,10 +84,7 @@
     <ClCompile Include="src\Player.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Menu.cpp">
-      <Filter>src\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Hud.cpp">
+    <ClCompile Include="src\GameView.cpp">
       <Filter>src\UI</Filter>
     </ClCompile>
     <ClCompile Include="src\GameOverView.cpp">
@@ -89,6 +95,12 @@
     </ClCompile>
     <ClCompile Include="src\StartMenu.cpp">
       <Filter>src\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Menu.cpp">
+      <Filter>src\UI\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Dialogue.cpp">
+      <Filter>src\UI\Base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

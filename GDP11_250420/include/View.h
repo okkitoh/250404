@@ -1,12 +1,11 @@
 #pragma once
 
-
-
 class View
 {
 public:
 	~View() = default;
 	virtual void Update() = 0;
+	virtual void Draw() {};
 	virtual void GuiDraw() = 0;
 	virtual bool IsActive()
 	{

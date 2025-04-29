@@ -36,17 +36,21 @@
   *
   *
   */
-#include <iostream>
-#include <vector>
 #include <chrono>
+#include <functional>
+#include <iostream>
+#include <map>
+#include <vector>
+
 #include "DGDef.h"
 #include "Log.h"
 #include "GameState.h"
 #include "Player.h"
 #include "Enemy.h"
 
+#include "Dialogue.h"
 #include "StartMenu.h"
-#include "Hud.h"
+#include "GameView.h"
 #include "GameOverView.h"
 #include "raylib.h"
 
@@ -55,7 +59,26 @@
 static Camera2D camera = { 0 };
 
 
-void ResolveActions(GameState& state, EAction characterAction, int target, std::vector<EAction> enemyActionn);
+std::ostream& operator<<(std::ostream& out, const EAction& action)
+{
+	switch (action)
+	{
+	case ATTACK: out << "ATTACK"; return out;
+	case PARRY: out << "PARRY"; return out;
+	case DEFEND: out << "DEFEND"; return out;
+	case NONE: out << "NONE";
+	}
+	return out;
+}
+
+std::ostream& operator<<(std::ostream& out, const BattleResult& br)
+{
+	out << "inst. " << br.instigator->GetName() << " | " << br.target->GetName() << " | a. " << br.action << ", r. " << br.result << ", d. " << br.damage;
+	return out;
+}
+
+
+std::vector<Dialogue*> ResolveActions(EAction characterAction, int target, std::vector<EAction> enemyActions);
 BattleResult ComputeResult(Character& instigator, EAction action1, Character& target, EAction action2);
 
 
@@ -64,44 +87,38 @@ int main()
 	InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, TextFormat("%.0fx%.0f As God Intended", WINDOW_WIDTH, WINDOW_HEIGHT));
 	SetTargetFPS(60);
 
-	GameState::GetRef().phase = EViewContext::START_MENU;
+	GameState::GetRef().SetPhase(EViewContext::START_MENU);
 	GameState::GetRef().PushView(new StartMenu());
 
-	//DEBUG game screen
-	//g_gamecontext.phase = EViewContext::GAME_RUNNING;
-	//g_gamecontext.ViewStack.push_back(new Hud(g_gamecontext));
-	//GameState::GetRef().Enemy[0].IncreaseDifficulty(GameState::GetRef().difficulty);
-
-	// DEBUG gameover screen
-	//g_gamecontext.MainPlayer.SetHealth(0);
 	while (!WindowShouldClose() && GameState::GetRef().IsRunning())
 	{
 
 		// This is where UI should
 			// Respond to user input 
 			// sync updates with models
-		//if (GameState::GetRef().playerAction != Action::IDLE)
-		//{
-		//	Action playerInput = GameState::GetRef().ConsumePlayerAction();
-		//	Action EnemyAction = GameState::GetRef().Enemy[0].ChooseAction();
-		//	ResolveActions(GameState::GetRef(), playerInput, 0, { EnemyAction });
-		//	if (!GameState::GetRef().Enemy[0].IsAlive())
-		//	{
-		//		GameState::GetRef().Enemy[0].IncreaseDifficulty(++GameState::GetRef().difficulty);
-		//	}
-		//}
-		//if (GameState::GetRef().phase == EViewContext::GAME_OVER)
-		//{
-		//	if (IsKeyPressed(KEY_Z) || IsKeyPressed(KEY_ENTER))
-		//	{
-		//		GameState::GetRef().phase = EViewContext::START_MENU;
-		//		GameState::GetRef().ClearViews();
-		//		GameState::GetRef().ViewStack.push_back(new Menu(GameState::GetRef()));
-		//		GameState::GetRef().MainPlayer.SetHealth(1);
-		//	}
-		//}
-		GameState::GetRef().UpdateViews();
-
+		if (GameState::GetRef().GetPhase() != EViewContext::PROCESSING)
+		{
+			GameState::GetRef().UpdateViews();
+			if (GameState::GetRef().PeekPlayerAction() != EAction::IDLE)
+			{
+				int target = 0;
+				EAction PlayerAction = GameState::GetRef().ConsumePlayerAction();
+				std::vector<EAction> EnemyActions = { GameState::GetRef().Enemies[0].ChooseAction() };
+				std::vector<Dialogue*> DialogueSequence = ResolveActions(PlayerAction, target, EnemyActions);
+				while (!DialogueSequence.empty())
+				{
+					GameState::GetRef().PushView(DialogueSequence.back());
+					DialogueSequence.pop_back();
+				}
+			}
+			if (!GameState::GetRef().MainPlayer.IsAlive() && GameState::GetRef().GetPhase() == EViewContext::GAME_OVER)
+			{
+				GameState::GetRef().MainPlayer.SetHealth(1);
+				GameState::GetRef().ClearViews();
+				GameState::GetRef().SetPhase(EViewContext::GAME_OVER);
+				GameState::GetRef().PushView(new GameOverView());
+			}
+		}
 
 		BeginDrawing();
 		{
@@ -110,56 +127,12 @@ int main()
 			// This is where viewport relative objects are drawn e.g. camera shake
 			EndMode2D();
 			// This is where UI should draw (absolute positioning)
-			GameState::GetRef().DrawViews();
+			GameState::GetRef().GUIDrawViews();
 			DrawFPS(WINDOW_WIDTH - 90, 10);
 		}
 		EndDrawing();
-
-		//if (!GameState::GetRef().MainPlayer.IsAlive() || GameState::GetRef().difficulty == MAX_DIFFICULTY)
-		//{
-		//	if (GameState::GetRef().phase != EViewContext::GAME_OVER)
-		//	{
-		//		GameState::GetRef().phase = EViewContext::GAME_OVER;
-		//		GameState::GetRef().ClearViews();
-		//		GameState::GetRef().ViewStack.push_back(new GameOverView(GameState::GetRef()));
-		//		GameState::GetRef().playerAction = Action::IDLE;
-		//	}
-		//}
 	}
 	CloseWindow();
-	/*
-	while (g_gamecontext.MainPlayer.IsAlive())
-	{
-		if (g_gamecontext.difficulty == MAX_DIFFICULTY)
-		{
-			std::cout << std::endl << "Game Over.\n\nyeah you win" << std::endl;
-			break;
-		}
-		else
-		{
-			g_gamecontext.Enemy[0].IncreaseDifficulty(++g_gamecontext.difficulty);
-			Log::Separator();
-			Log::LogMessage(MLOG_DEFAULT, "A wild " + g_gamecontext.Enemy->GetName() + " has appeared!");
-			Log::Separator();
-		}
-
-		while (g_gamecontext.Enemy[0].IsAlive())
-		{
-			Action PlayerAction = g_gamecontext.MainPlayer.ChooseAction();
-			Action EnemyAction = g_gamecontext.Enemy[0].ChooseAction();
-			std::cout << "Player: " << PlayerAction << std::endl;
-			std::cout << "Enemy: " << EnemyAction << std::endl;
-			ResolveActions(g_gamecontext, PlayerAction, 0, { EnemyAction });
-			if (!g_gamecontext.MainPlayer.IsAlive())
-			{
-				Log::LogMessage(MLOG_ERROR, "\n" + g_gamecontext.MainPlayer.GetName() + " falls in battle\nGame Over.\n");
-				return EXIT_SUCCESS;
-			}
-		}
-
-		Log::LogMessage(MLOG_DEFAULT, "\n" + g_gamecontext.Enemy[0].GetName() + " was defeated!\n");
-	}
-	*/
 	return EXIT_SUCCESS;
 }
 
@@ -168,98 +141,154 @@ int main()
  * Parry  - Unicast
  * Defend - Broadcast
  */
-void ResolveActions(GameState& state, EAction characterAction, int target, std::vector<EAction> enemyAction)
+std::vector<Dialogue*> ResolveActions(EAction playerAction, int target, std::vector<EAction> enemyActions)
 {
-	target = std::max(std::min(target, MAX_ENEMIES), 0);
+	std::map<std::pair<EAction, EAction>, std::string> canned
+	{
+		{{DEFEND, NONE}, "%s takes a defensive stance"},
+		{{PARRY, NONE}, "%s takes a parry stance"},
+		{{ATTACK, ATTACK}, "%s attacks %s for %d damage"},
+		{{DEFEND, ATTACK}, "%s defends against %s attack and takes %d damage" },
+		{{PARRY, ATTACK}, "%s parries %s attack and deals %d damage"}
+	};
+	std::vector<Dialogue*> DialogueSequence;
 
-	std::vector<LogEntry> lmsg = std::vector<LogEntry>();
-	BattleResult outcome;
-	if (characterAction == DEFEND)
-	{
-		lmsg.push_back({ MLOG_DEFAULT, state.MainPlayer.GetName() + " switches to a defensive stance.", TIMESTAMP });
-	}
-	else if (characterAction == PARRY)
-	{
-		lmsg.push_back({ MLOG_DEFAULT, state.MainPlayer.GetName() + " switches to a parry stance.", TIMESTAMP });
-	}
-	else if (characterAction == ATTACK)
-	{
-		if (enemyAction[target] == ATTACK)
-		{
-			outcome = ComputeResult(state.MainPlayer, ATTACK, state.Enemy[target], ATTACK);
-			outcome.target->SetHealth(outcome.target->GetHealth() - outcome.damage);
-			lmsg.push_back({ MLOG_INFO, outcome.instigator->GetName() + " attacks " + outcome.target->GetName() + " for " + std::to_string(outcome.damage) + " damage (" + std::to_string(outcome.target->GetHealth()) + "/" + std::to_string(outcome.target->GetMaxHealth()) + ")", TIMESTAMP});
-		}
-	}
+	Player& player = GameState::GetRef().MainPlayer;
+	target = std::max(std::min(target, MAX_ENEMIES-1), 0); // clamp, no oob
 
-	EAction characterTargetAction;
-	for (int i = 0; i < MAX_ENEMIES; ++i)
+	// Show statuses first so following damage calculations make sense to player
+	if (canned.find({ playerAction, NONE }) != canned.end())
 	{
-		if (!state.Enemy[i].IsAlive())
+		DialogueSequence.push_back(new Dialogue(TextFormat(canned[{playerAction, NONE }].c_str(), player.GetName().c_str() )));
+	}
+	for (int i = 0; i < enemyActions.size(); ++i)
+	{
+		Enemy& enemy = GameState::GetRef().Enemies[i];
+		if (enemy.IsAlive())
 		{
-			continue;
-		}
-		if (characterAction != DEFEND && i != target)
-		{
-			characterTargetAction = NONE;
-		}
-		else
-		{
-			characterTargetAction = characterAction;
-		}
-		outcome = ComputeResult(state.Enemy[i], enemyAction[i], state.MainPlayer, characterTargetAction);
-		if (!GOD_MODE || (GOD_MODE && outcome.target->GetName() != state.MainPlayer.GetName()))
-		{
-			outcome.target->SetHealth(outcome.target->GetHealth() - outcome.damage);
-		}
-		if (outcome.action == DEFEND) lmsg.push_back({ MLOG_WARNING, outcome.target->GetName() + " defends against " + outcome.instigator->GetName() + "'s attack and takes " + std::to_string(outcome.damage) + " damage (" + std::to_string(outcome.target->GetHealth()) + "/" + std::to_string(outcome.target->GetMaxHealth()) + ")", TIMESTAMP });
-		if (outcome.action == PARRY) lmsg.push_back({ (outcome.target->GetName() != state.MainPlayer.GetName() ? MLOG_INFO : MLOG_ERROR), outcome.target->GetName() + "'s attack was parried by " + outcome.instigator->GetName() + "! " + outcome.target->GetName() + " takes " + std::to_string(outcome.damage) + " damage (" + std::to_string(outcome.target->GetHealth()) + "/" + std::to_string(outcome.target->GetMaxHealth()) + ")", TIMESTAMP });
-		if (outcome.action == ATTACK) lmsg.push_back({ MLOG_ERROR, outcome.instigator->GetName() + " attacks " + outcome.target->GetName() + " for " + std::to_string(outcome.damage) + " damage (" + std::to_string(outcome.target->GetHealth()) + "/" + std::to_string(outcome.target->GetMaxHealth()) + ")", TIMESTAMP });
-		if (outcome.action == NONE)
-		{
-			if (enemyAction[i] == DEFEND) lmsg.push_back({ MLOG_DEFAULT, state.Enemy[i].GetName() + " defends. Nothing happens", TIMESTAMP });
-			if (enemyAction[i] == PARRY) lmsg.push_back({ MLOG_DEFAULT, state.Enemy[i].GetName() + " parries. Nothing happens", TIMESTAMP });
+			if (canned.find({enemyActions[i], NONE}) != canned.end())
+			{
+				DialogueSequence.push_back(new Dialogue(TextFormat(canned[{enemyActions[i], NONE }].c_str(), enemy.GetName().c_str() )));
+			}
 		}
 	}
 
-	for (auto lm : lmsg)
+	// A little hacky, take a snapshot of pre-battle states
+	Player trackPlayer = player;
+	std::vector<Enemy> trackBattle;
+	for (const Enemy& e : GameState::GetRef().Enemies)
 	{
-		Log::PrintLog(lm);
+		trackBattle.push_back(e);
 	}
+
+	// Resolve battle outcomes
+	// Turn order: player > enemies 0..N
+	if (canned.find({playerAction,  enemyActions[target]}) != canned.end())
+	{
+		BattleResult result = ComputeResult(player, playerAction, GameState::GetRef().Enemies[target], enemyActions[target]);
+		trackBattle[target].SetHealth(trackBattle[target].GetHealth() - result.damage);
+		DialogueSequence.push_back(new Dialogue(
+			TextFormat(canned[{ playerAction, enemyActions[target] }].c_str(), result.instigator->GetName().c_str(), result.target->GetName().c_str(), result.damage),
+			[result]() {
+				result.target->SetHealth(result.target->GetHealth() - result.damage);
+			}
+		));
+		if (!trackBattle[target].IsAlive())
+		{
+			DialogueSequence.push_back(new Dialogue(
+				result.target->GetName() + " was defeated!"
+			));
+		}
+		
+	}
+	for (int i = 0; i < enemyActions.size(); ++i)
+	{
+		Enemy& enemy = GameState::GetRef().Enemies[i];
+		if (trackBattle[i].IsAlive() && trackPlayer.IsAlive())
+		{
+			if (canned.find({ enemyActions[i], playerAction }) != canned.end())
+			{
+				BattleResult enemyResult = ComputeResult(enemy, enemyActions[i], player, playerAction);
+				// welp this rules out possibility of resolving confusion status
+				trackPlayer.SetHealth(trackPlayer.GetHealth() - enemyResult.damage);
+				DialogueSequence.push_back(new Dialogue(
+					TextFormat(canned[{enemyActions[i], playerAction }].c_str(), enemyResult.instigator->GetName().c_str(), enemyResult.target->GetName().c_str(), enemyResult.damage),
+					[enemyResult]() {
+						enemyResult.target->SetHealth(enemyResult.target->GetHealth() - enemyResult.damage);
+					}
+				));
+				if (!trackPlayer.IsAlive())
+				{
+					DialogueSequence.push_back(new Dialogue(enemyResult.target->GetName() + " was defeated!",
+						[]() {
+							GameState::GetRef().SetPhase(EViewContext::GAME_OVER);
+						}
+					));
+					break;
+				}
+			}
+		}
+	}
+	bool allEnemiesDefeated = true;
+	for (int i = 0; i < trackBattle.size(); ++i)
+	{
+		if (trackBattle[i].IsAlive())
+		{
+			allEnemiesDefeated = false;
+			break;
+		}
+	}
+	if (allEnemiesDefeated)
+	{
+		DialogueSequence.push_back(new Dialogue("All enemies defeated!",
+			[]() {
+				GameState::GetRef().Enemies[0].IncreaseDifficulty(++GameState::GetRef().difficulty);
+			}
+		));
+	}
+
+	return DialogueSequence;
 }
 // Answers question what happens to instigator's action when target does blah
+//     A  D  P  Tgt
+//  A  X  1  1      X = Both sides succeed
+//  D  1  0  0      1 = instigator disadvantage
+//  P  1  0  0      0 = Nothing happens
+// Ins
 BattleResult ComputeResult(Character& instigator, EAction action1, Character& target, EAction action2)
 {
-	
+
 	BattleResult res = {};
 	res.instigator = &instigator;
 	res.target = &target;
 	res.damage = 0;
+	res.action = action1;
+	res.result = EAction::NONE;
 
-	Character* temp = nullptr;
+	//Character* temp = nullptr;
 	switch (action1)
 	{
 		case ATTACK:
 			switch (action2)
 			{
 				case ATTACK:
-					res.action = ATTACK;
+					res.result = ATTACK;
 					res.damage = res.instigator->GetAtkPower();
 				break;
 				case PARRY:
-					temp = res.instigator;
-					res.instigator = res.target;
-					res.target = temp;
-					temp = nullptr;
-					res.action = PARRY;
+					//temp = res.instigator;
+					//res.instigator = res.target;
+					//res.target = temp;
+					//temp = nullptr;
+					res.result = PARRY;
 					res.damage = res.instigator->GetAtkPower() * 2;
 				break;
 				case DEFEND:
-					res.action = DEFEND;
+					res.result = DEFEND;
 					res.damage = 0;
 				break;
 				case NONE:
-					res.action = action1;
+					res.result = action1;
 					res.damage = res.instigator->GetAtkPower();
 				break;
 			}
@@ -268,19 +297,20 @@ BattleResult ComputeResult(Character& instigator, EAction action1, Character& ta
 			switch (action2)
 			{
 				case ATTACK:
-					res.action = PARRY;
+					// res.intigator = &instigator
+					res.result = PARRY;
 					res.damage = res.instigator->GetAtkPower() * 2;
 				break;
 				case PARRY:
-					res.action = NONE;
+					res.result = NONE;
 					res.damage = 0;
 				break;
 				case DEFEND:
-					res.action = NONE;
+					res.result = NONE;
 					res.damage = 0;
 				break;
 				case NONE:
-					res.action = NONE;
+					res.result = NONE;
 					res.damage = 0;
 				break;
 			}
@@ -289,23 +319,23 @@ BattleResult ComputeResult(Character& instigator, EAction action1, Character& ta
 			switch (action2)
 			{
 				case ATTACK:
-					temp = res.instigator;
-					res.instigator = res.target;
-					res.target = temp; // because instigator is on receiving end
-					temp = nullptr;
-					res.action = DEFEND;
+					//temp = res.instigator;
+					//res.instigator = res.target;
+					//res.target = temp; // because instigator is on receiving end
+					//temp = nullptr;
+					res.result = DEFEND;
 					res.damage = 0;
 				break;
 				case PARRY:
-					res.action = NONE;
+					res.result = NONE;
 					res.damage = 0;
 				break;
 				case DEFEND:
-					res.action = NONE;
+					res.result = NONE;
 					res.damage = 0;
 				break;
 				case NONE:
-					res.action = NONE;
+					res.result = NONE;
 					res.damage = 0;
 				break;
 			}

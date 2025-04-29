@@ -47,11 +47,14 @@ void Enemy::IncreaseDifficulty(int RoundNumber)
 		Name = "Goblin Warrior";
 		break;
 	case 1:
-	default:
 		MaxHealth = 1;
 		Health = MaxHealth;
 		AtkPower = 1;
 		Name = "Slime";
+		break;
+	default:
+		MaxHealth = 0;
+		Health = MaxHealth;
 	}
 	this->SetMaxHealth(Health);
 }

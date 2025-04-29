@@ -14,7 +14,7 @@ void GameOverView::Update()
 {
 	if (GetKeyPressed())
 	{
-		this->Invalidate(); // mark self for deletion later in main loop
+		GameState::GetRef().PopView();
 		GameState::GetRef().PushView(new StartMenu());
 	}
 }

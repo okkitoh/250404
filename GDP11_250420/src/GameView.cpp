@@ -1,30 +1,30 @@
 
-#include "Hud.h"
+#include "GameView.h"
 #include "GameState.h"
+#include "Dialogue.h"
 #include "raylib.h"
 #include "raymath.h"
 
 
 
-
-Hud::Hud() : Menu()
+GameView::GameView() : Menu()
 {
 	cursorX = 0;
 	cursorY = 0;
 	AddOption("Attack", []() {
-		printf("Player is attacking\n");
+		GameState::GetRef().SetPlayerAction(EAction::ATTACK);
 	});
 	AddOption("Parry", []() {
-		printf("Player assumes a parry stance\n");
+		GameState::GetRef().SetPlayerAction(EAction::PARRY);
 	});
 	AddOption("Defend", []() {
-		printf("Player assumes a defensive stance\n");
+		GameState::GetRef().SetPlayerAction(EAction::DEFEND);
 	});
 	AddOption("Items", []() {
 		printf("Show item menu\n");
 	});
 }
-void Hud::Update()
+void GameView::Update()
 {
 	if (IsKeyPressed(KEY_UP))
 	{
@@ -64,7 +64,7 @@ void Hud::Update()
 		}
 	}
 }
-void Hud::GuiDraw()
+void GameView::GuiDraw()
 {
 	DrawText("HP", 18, 18, 18, WHITE);
 	float HP_size = 200 / GameState::GetRef().MainPlayer.GetMaxHealth();

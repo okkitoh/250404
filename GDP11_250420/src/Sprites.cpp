@@ -2,10 +2,13 @@
 #include "Sprites.h"
 #include <unordered_map>
 
+
+
 namespace Sprites
 {
 	std::unordered_map<SpriteID, Texture2D> spriteCache;
 }
+
 
 Texture2D Sprites::GetSprite(SpriteID key)
 {
