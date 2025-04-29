@@ -78,7 +78,6 @@ void GameView::GuiDraw()
 	DrawText(roundNumberLabel.c_str(), WINDOW_WIDTH / 2 - labelSize, 32, 32, WHITE);
 
 	int namesize = MeasureText(enemy.GetName().c_str(), 32) / 2;
-	std::cout << namesize << std::endl;
 	DrawText(enemy.GetName().c_str(), WINDOW_WIDTH / 2.f - namesize, 72, 32, WHITE);
 
 	float viewY = WINDOW_HEIGHT - 200;
