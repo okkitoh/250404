@@ -56,7 +56,12 @@
 
 
 
-static Camera2D camera = { 0 };
+Camera2D camera = {
+	{ 0.f, 0.f },
+	{ 0.f, 0.f },
+	0.f,
+	1.f
+};
 
 
 std::ostream& operator<<(std::ostream& out, const EAction& action)
@@ -85,10 +90,12 @@ BattleResult ComputeResult(Character& instigator, EAction action1, Character& ta
 int main()
 {
 	InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, TextFormat("%.0fx%.0f As God Intended", WINDOW_WIDTH, WINDOW_HEIGHT));
-	SetTargetFPS(60);
+	SetTargetFPS(TARGET_FPS);
 
 	GameState::GetRef().SetPhase(EViewContext::START_MENU);
 	GameState::GetRef().PushView(new StartMenu());
+
+	Animation animation = Animation(SpriteID::KNIGHT_IDLE, { WINDOW_WIDTH / 2.f, WINDOW_HEIGHT / 2.f }, 5, true);
 
 	while (!WindowShouldClose() && GameState::GetRef().IsRunning())
 	{
@@ -124,8 +131,9 @@ int main()
 		{
 			ClearBackground(BLACK);
 			BeginMode2D(camera);
-			// This is where viewport relative objects are drawn e.g. camera shake
+			animation.Draw();
 			EndMode2D();
+
 			// This is where UI should draw (absolute positioning)
 			GameState::GetRef().GUIDrawViews();
 			DrawFPS(WINDOW_WIDTH - 90, 10);

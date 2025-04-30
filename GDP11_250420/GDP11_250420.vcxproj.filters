@@ -26,20 +26,20 @@
     <Filter Include="src\UI\Base">
       <UniqueIdentifier>{32566a2b-751a-4711-91f0-3bf157c64008}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\Entity">
+      <UniqueIdentifier>{0abc8077-ef25-4893-b0c3-c8240d32e4b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Entity">
+      <UniqueIdentifier>{659a323e-a9d7-4a8f-ba6b-f8cad2c4bc4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Util">
+      <UniqueIdentifier>{c8383b8c-1a66-46cc-a86a-fc7dc9ec322b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Util">
+      <UniqueIdentifier>{3ae035bf-e15e-4491-850d-a99046936b20}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Character.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Enemy.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Log.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Player.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="include\GameState.h">
       <Filter>include</Filter>
     </ClInclude>
@@ -48,9 +48,6 @@
     </ClInclude>
     <ClInclude Include="include\GameOverView.h">
       <Filter>include\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Sprites.h">
-      <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\StartMenu.h">
       <Filter>include\UI</Filter>
@@ -67,21 +64,27 @@
     <ClInclude Include="include\Menu.h">
       <Filter>include\UI\Base</Filter>
     </ClInclude>
+    <ClInclude Include="include\Character.h">
+      <Filter>include\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Enemy.h">
+      <Filter>include\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Player.h">
+      <Filter>include\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Log.h">
+      <Filter>include\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Sprites.h">
+      <Filter>include\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Animation.h">
+      <Filter>include\UI\Base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Character.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Enemy.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Log.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\main.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Player.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\GameView.cpp">
@@ -90,9 +93,6 @@
     <ClCompile Include="src\GameOverView.cpp">
       <Filter>src\UI</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sprites.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\StartMenu.cpp">
       <Filter>src\UI</Filter>
     </ClCompile>
@@ -100,6 +100,24 @@
       <Filter>src\UI\Base</Filter>
     </ClCompile>
     <ClCompile Include="src\Dialogue.cpp">
+      <Filter>src\UI\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Player.cpp">
+      <Filter>src\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Character.cpp">
+      <Filter>src\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Enemy.cpp">
+      <Filter>src\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sprites.cpp">
+      <Filter>src\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Log.cpp">
+      <Filter>src\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Animation.cpp">
       <Filter>src\UI\Base</Filter>
     </ClCompile>
   </ItemGroup>

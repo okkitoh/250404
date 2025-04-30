@@ -2,13 +2,12 @@
 #include "GameOverView.h"
 #include "GameState.h"
 #include "StartMenu.h"
-#include "Sprites.h"
-#include "raylib.h"
 
 
 
 GameOverView::GameOverView()
 {
+	splash = Sprites::GetSprite(GRAVE);
 }
 void GameOverView::Update()
 {
@@ -20,8 +19,9 @@ void GameOverView::Update()
 }
 void GameOverView::GuiDraw()
 {
-	Texture2D graveSprite = Sprites::GetSprite(GRAVE);
-	DrawTextureEx(graveSprite, { (WINDOW_WIDTH / 2.f) - (256.f * 3.f / 2.f), -20.f }, 0, 3, WHITE);
+	int scale = 3;
+	DrawTextureEx(splash.tex, { (WINDOW_WIDTH / 2.f) - (splash.tex.width * scale / 2.f), -20.f }, 0, scale, WHITE);
+
 	int size = 9 * 32;
 	DrawText("Game Over", (WINDOW_WIDTH - (size/2.f)) / 2.f, (WINDOW_HEIGHT / 8.f), 32, RED);
 	const char* text = TextFormat("%s falls in battle", GameState::GetRef().MainPlayer.GetName().c_str());

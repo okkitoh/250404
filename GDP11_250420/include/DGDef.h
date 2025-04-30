@@ -6,12 +6,12 @@
 class Character;
 
 
-
-static constexpr float WINDOW_WIDTH = 1280.f;
-static constexpr float WINDOW_HEIGHT = 720.f;
-static constexpr int MAX_DIFFICULTY = 5;
-static constexpr bool GOD_MODE = 0;
-static constexpr int MAX_ENEMIES = 1;
+constexpr int TARGET_FPS = 60;
+constexpr float WINDOW_WIDTH = 1280.f;
+constexpr float WINDOW_HEIGHT = 720.f;
+constexpr int MAX_DIFFICULTY = 5;
+constexpr bool GOD_MODE = 0;
+constexpr int MAX_ENEMIES = 1;
 
 
 enum EViewContext

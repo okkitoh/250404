@@ -3,6 +3,7 @@
 #include <memory>
 #include "DGDef.h"
 #include "View.h"
+#include "Animation.h"
 #include "Player.h"
 #include "Enemy.h"
 
@@ -37,13 +38,11 @@ public:
 	/* END SINGLETON DEF */
 
 
-	/* View Management */
-public:
-	std::vector<View*> ViewStack; // TODO make this private
-
 
 private:
 	EViewContext phase = START_MENU;
+	std::vector<View*> ViewStack;
+	std::vector<Animation*> AnimationStack;
 public:
 	
 	int difficulty = 1;
