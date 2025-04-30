@@ -32,6 +32,6 @@ Sprite Sprites::GetSprite(SpriteID key)
 		case GRAVE:
 			return { DeferredLoad(GRAVE, "GDP11_250420/resources/grave.png") };
 		case KNIGHT_IDLE:
-			return { DeferredLoad(KNIGHT_IDLE, "GDP11_250420/resources/AN_Knight_Idle.png"), 4, 3 };
+			return { DeferredLoad(KNIGHT_IDLE, "GDP11_250420/resources/AN_Knight_Idle.png"), 4, 3, 3 };
 	}
 }

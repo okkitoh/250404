@@ -5,10 +5,9 @@
 struct Sprite
 {
 	Texture2D tex = { 0 };
-	int columns = 1;
-	int rows = 1;
-	//int u = 0; // not used until texture atlasing
-	//int v = 0; // not used until texture atlasing
+	int columns = 1;   // Must span whole width of sheet
+	int rows = 1;      // Must span whole height of sheet
+	int keyframes = 1; // Total nummber of frames in animation
 };
 
 

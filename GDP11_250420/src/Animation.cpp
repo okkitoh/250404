@@ -9,8 +9,10 @@ Animation::Animation(SpriteID key, Vector2 position, int framesPerSecond, bool i
 	this->position = position;
 	this->framesPerSecond = framesPerSecond;
 	this->isLooping = isLooping;
+	
 	dimensions.x = static_cast<float>(sheet.tex.width) / static_cast<float>(sheet.columns);
 	dimensions.y = static_cast<float>(sheet.tex.height) / static_cast<float>(sheet.rows);
+	keyframes = sheet.keyframes;
 	frameCounter = 0;
 	framePosition = 0;
 }
@@ -26,10 +28,9 @@ void Animation::Draw()
 		if (frameCounter >= TARGET_FPS / framesPerSecond)
 		{
 			frameCounter = 0;
-			framePosition++;
-			if (isLooping && framePosition < (sheet.columns * sheet.rows))
+			if (framePosition < keyframes - 1 || isLooping)
 			{
-				framePosition = ++framePosition % (sheet.columns * sheet.rows);
+				framePosition = ++framePosition % keyframes;
 			}
 
 		}
@@ -42,8 +43,8 @@ void Animation::Draw()
 			float height;           // Rectangle height
 		} Rectangle;
 		*/
-		int x = (framePosition % sheet.columns) * dimensions.x;
-		int y = static_cast<int>(framePosition / sheet.rows) * dimensions.y;
+		int x = (framePosition % sheet.columns) * static_cast<int>(dimensions.x);
+		int y = framePosition / sheet.rows * static_cast<int>(dimensions.y);
 
 		Rectangle source = {
 			x,
@@ -52,10 +53,10 @@ void Animation::Draw()
 			dimensions.y
 		};
 		Rectangle display = {
-			position.x,
-			position.y,
-			dimensions.x,
-			dimensions.y
+			position.x - dimensions.x,
+			position.y - dimensions.y,
+			dimensions.x *2,
+			dimensions.y *2
 		};
 		Vector2 origin = {
 			0,
