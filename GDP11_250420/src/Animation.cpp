@@ -9,6 +9,7 @@ Animation::Animation(SpriteID key, Vector2 position, bool isLooping) : View()
 	this->spriteid = key;
 	this->position = position;
 	this->isLooping = isLooping;
+	this->isFlip = false;
 	this->playspeed = 1.f;
 	
 	dimensions.x = static_cast<float>(sheet.tex.width) / static_cast<float>(sheet.columns);
@@ -27,6 +28,10 @@ void Animation::SetSprite(SpriteID key)
 void Animation::SetLooping(bool bLooping)
 {
 	this->isLooping = bLooping;
+}
+void Animation::SetFlip(bool isFlip)
+{
+	this->isFlip = isFlip;
 }
 void Animation::SetPlayspeed(float playspeed)
 {
@@ -80,6 +85,13 @@ void Animation::Draw()
 			0,
 			0
 		};
+
+		if (this->isFlip)
+		{
+			source.width *= -1;
+			display.x += dimensions.x;
+		}
+
 		DrawTexturePro(sheet.tex, source, display, origin, 0.f, WHITE);
 	}
 }

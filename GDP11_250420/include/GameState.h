@@ -49,15 +49,21 @@ public:
 	Player MainPlayer;
 	EAction playerAction = EAction::IDLE; // ideally should be a message queue but seems abit overkill in turned-based. only ever 2 actions, confirm/cancel 
 	AnimationHandle playerModel = { 0 };
+	AnimationHandle enemyModel = { 0 };
 
 
 
 	inline void NewGame()
 	{
-		difficulty = 1;
 		this->MainPlayer.Reset();
 		playerModel = RegisterAnimation(new Animation(SpriteID::KNIGHT_IDLE, { WINDOW_HEIGHT / 2, WINDOW_HEIGHT / 2 }, true));
+
+		difficulty = 1;
 		Enemies[0].IncreaseDifficulty(difficulty);
+		Animation* temp = new Animation(SpriteID::GOBLIN_IDLE, { WINDOW_WIDTH - (WINDOW_HEIGHT / 2), WINDOW_HEIGHT / 2 }, true);
+		temp->SetFlip(true);
+		enemyModel = RegisterAnimation(temp);
+
 		SetPhase(EViewContext::START_MENU);
 	}
 	inline void SetPhase(EViewContext phase) { this->phase = phase; }

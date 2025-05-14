@@ -177,7 +177,7 @@ std::vector<Dialogue*> ResolveActions(EAction playerAction, int target, std::vec
 				{
 					switch (playerAction) {
 						case DEFEND: GameState::GetRef().playerModel.SwapSprite(KNIGHT_DEFEND); break;
-						case PARRY: GameState::GetRef().playerModel.SwapSprite(KNIGHT_PARRY); break;
+						case PARRY: GameState::GetRef().playerModel.SwapSprite(KNIGHT_PARRY);   break;
 					}
 				},
 				[]()
@@ -196,19 +196,22 @@ std::vector<Dialogue*> ResolveActions(EAction playerAction, int target, std::vec
 		Enemy& enemy = GameState::GetRef().Enemies[i];
 		if (enemy.IsAlive())
 		{
-			if (canned.find({ enemyActions[i], NONE }) != canned.end())
+			EAction enemyAction = enemyActions[i];
+			if (canned.find({ enemyAction, NONE }) != canned.end())
 			{
 				DialogueSequence.push_back(
 					new Dialogue(
-						TextFormat(canned[{enemyActions[i], NONE }].c_str(), enemy.GetName().c_str()),
-						[]()
+						TextFormat(canned[{enemyAction, NONE }].c_str(), enemy.GetName().c_str()),
+						[&enemy, enemyAction]()
 						{
+							GameState::GetRef().enemyModel.SwapSprite(Enemy::GetActionSprite(enemy.GetMobType(), enemyAction));
 						},
 						[]()
 						{
 						},
-						[]()
+						[&enemy]()
 						{
+							GameState::GetRef().enemyModel.SwapSprite(Enemy::GetActionSprite(enemy.GetMobType(), IDLE));
 						}
 					));
 			}
@@ -229,16 +232,17 @@ std::vector<Dialogue*> ResolveActions(EAction playerAction, int target, std::vec
 	{
 		BattleResult result = ComputeResult(player, playerAction, GameState::GetRef().Enemies[target], enemyActions[target]);
 		trackBattle[target].SetHealth(trackBattle[target].GetHealth() - result.damage);
-
+		EMobType enemyType = trackBattle[target].GetMobType();
 		DialogueSequence.push_back(
 			new Dialogue(
 				TextFormat(canned[{ playerAction, enemyActions[target] }].c_str(), result.instigator->GetName().c_str(), result.target->GetName().c_str(), result.damage),
-				[result]()
+				[result,enemyType]()
 				{
 					switch (result.result)
 					{
-						case ATTACK: GameState::GetRef().playerModel.SwapSprite(SpriteID::KNIGHT_ATTACK); break;
-						case PARRY:  GameState::GetRef().playerModel.SwapSprite(SpriteID::KNIGHT_PARRY);  break;
+						case ATTACK: GameState::GetRef().playerModel.SwapSprite(SpriteID::KNIGHT_ATTACK); GameState::GetRef().enemyModel.SwapSprite(Enemy::GetHurtSprite(enemyType));break;
+						case PARRY:  GameState::GetRef().playerModel.SwapSprite(SpriteID::KNIGHT_PARRY);  GameState::GetRef().enemyModel.SwapSprite(Enemy::GetHurtSprite(enemyType));break;
+						case DEFEND: GameState::GetRef().playerModel.SwapSprite(SpriteID::KNIGHT_DEFEND); GameState::GetRef().enemyModel.SwapSprite(Enemy::GetActionSprite(enemyType, ATTACK));break;
 						default:     GameState::GetRef().playerModel.SwapSprite(SpriteID::KNIGHT_IDLE);   break;
 					}
 				},
@@ -246,18 +250,21 @@ std::vector<Dialogue*> ResolveActions(EAction playerAction, int target, std::vec
 				{
 					result.target->SetHealth(result.target->GetHealth() - result.damage);
 				},
-				[result]()
+				[result,enemyType]()
 				{
 					GameState::GetRef().playerModel.SwapSprite(KNIGHT_IDLE);
+					GameState::GetRef().enemyModel.SwapSprite(Enemy::GetActionSprite(enemyType, IDLE));
 				}
 			));
 		if (!trackBattle[target].IsAlive())
 		{
+			EMobType enemyType = trackBattle[target].GetMobType();
 			DialogueSequence.push_back(
 				new Dialogue(
 					result.target->GetName() + " was defeated!",
-					[]()
+					[enemyType]()
 					{
+						GameState::GetRef().enemyModel.SwapSprite(Enemy::GetDeathSprite(enemyType));
 					},
 					[]()
 					{
@@ -281,22 +288,23 @@ std::vector<Dialogue*> ResolveActions(EAction playerAction, int target, std::vec
 				DialogueSequence.push_back(
 					new Dialogue(
 						TextFormat(canned[{enemyActions[i], playerAction }].c_str(), bresult.instigator->GetName().c_str(), bresult.target->GetName().c_str(), bresult.damage),
-						[bresult]()
+						[bresult, &enemy]()
 						{
 							switch (bresult.result)
 							{
-								case ATTACK: GameState::GetRef().playerModel.SwapSprite(SpriteID::KNIGHT_HURT);   break;
-								case DEFEND: GameState::GetRef().playerModel.SwapSprite(SpriteID::KNIGHT_ATTACK); break;
-								case PARRY: GameState::GetRef().playerModel.SwapSprite(SpriteID::KNIGHT_HURT);    break;
+								case ATTACK: GameState::GetRef().playerModel.SwapSprite(SpriteID::KNIGHT_HURT);   GameState::GetRef().enemyModel.SwapSprite(Enemy::GetActionSprite(enemy.GetMobType(), ATTACK)); break;
+								case DEFEND: GameState::GetRef().playerModel.SwapSprite(SpriteID::KNIGHT_ATTACK); GameState::GetRef().enemyModel.SwapSprite(Enemy::GetActionSprite(enemy.GetMobType(), DEFEND)); break;
+								case PARRY:  GameState::GetRef().playerModel.SwapSprite(SpriteID::KNIGHT_HURT);   GameState::GetRef().enemyModel.SwapSprite(Enemy::GetActionSprite(enemy.GetMobType(), PARRY));  break;
 							}
 						},
 						[bresult]()
 						{
 							bresult.target->SetHealth(bresult.target->GetHealth() - bresult.damage);
 						},
-						[]()
+						[&enemy]()
 						{
 							GameState::GetRef().playerModel.SwapSprite(SpriteID::KNIGHT_IDLE);
+							GameState::GetRef().enemyModel.SwapSprite(Enemy::GetActionSprite(enemy.GetMobType(), IDLE));
 						}
 					));
 				if (!trackPlayer.IsAlive())
@@ -312,6 +320,7 @@ std::vector<Dialogue*> ResolveActions(EAction playerAction, int target, std::vec
 							{
 								GameState::GetRef().SetPhase(EViewContext::GAME_OVER);
 								GameState::GetRef().playerModel.Unregister();
+								GameState::GetRef().enemyModel.Unregister();
 							},
 							[]()
 							{
@@ -337,6 +346,7 @@ std::vector<Dialogue*> ResolveActions(EAction playerAction, int target, std::vec
 			[]()
 			{
 				GameState::GetRef().Enemies[0].IncreaseDifficulty(++GameState::GetRef().difficulty);
+				GameState::GetRef().enemyModel.SwapSprite(Enemy::GetActionSprite(GameState::GetRef().Enemies[0].GetMobType(), IDLE));
 			}
 		));
 	}

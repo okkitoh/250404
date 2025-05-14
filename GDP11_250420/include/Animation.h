@@ -16,6 +16,7 @@ public:
 	Animation(SpriteID key, Vector2 position, bool isLooping);
 	void SetSprite(SpriteID key);
 	void SetLooping(bool bLooping);
+	void SetFlip(bool isFlip);
 	void SetPlayspeed(float playspeed);
 	void SetFramePosition(int framePosition);
 	void Update();
@@ -26,6 +27,7 @@ private:
 	Sprite sheet;
 	Vector2 position; // screen space
 	bool isLooping;
+	bool isFlip;
 
 	Vector2 dimensions;
 	int frameCounter;

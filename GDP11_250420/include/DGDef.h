@@ -30,6 +30,15 @@ enum EAction
 	NONE
 };
 
+enum EMobType
+{
+	GOBLIN,
+	CYCLOPS,
+	OGRE,
+	SKELETON_KNIGHT,
+	KNIGHT
+};
+
 typedef struct BattleResult
 {
 	Character* instigator;
