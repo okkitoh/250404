@@ -4,7 +4,6 @@
 #include "raylib.h"
 
 
-
 Dialogue::Dialogue(std::string text)
 {
 	this->text = text;
@@ -14,13 +13,28 @@ Dialogue::Dialogue(std::string text)
 		GameState::GetRef().PopView();
 	});
 }
-Dialogue::Dialogue(std::string text, std::function<void()> callback)
+Dialogue::Dialogue(std::string text, std::function<void()> onConfirm)
 {
 	this->text = text;
-	OnConfirm(callback);
+	OnConfirm(onConfirm);
 	OnExit([]() {
 		GameState::GetRef().PopView();
 	});
+}
+Dialogue::Dialogue(std::string text, std::function<void()> onEnter, std::function<void()> onConfirm, std::function<void()> onExit)
+{
+	this->text = text;
+	OnEnter(onEnter);
+	OnConfirm(onConfirm);
+	OnExit([onExit]() {
+		onExit();
+		GameState::GetRef().PopView();
+	});
+}
+
+void Dialogue::OnEnter(std::function<void()> callback)
+{
+	onEnter = callback;
 }
 void Dialogue::OnConfirm(std::function<void()> callback)
 {
@@ -32,6 +46,11 @@ void Dialogue::OnExit(std::function<void()> callback)
 }
 void Dialogue::Update()
 {
+	if (onEnter != nullptr)
+	{
+		onEnter();
+		onEnter = nullptr;
+	}
 	if (GetKeyPressed())
 	{
 		onConfirm();

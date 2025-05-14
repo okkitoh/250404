@@ -5,7 +5,6 @@
 #include <functional>
 class Character;
 
-
 constexpr int TARGET_FPS = 60;
 constexpr float WINDOW_WIDTH = 1280.f;
 constexpr float WINDOW_HEIGHT = 720.f;
@@ -19,10 +18,8 @@ enum EViewContext
 	EXIT,
 	START_MENU,
 	GAME_RUNNING,
-	GAME_OVER,
-	PROCESSING
+	GAME_OVER
 };
-
 
 enum EAction
 {
@@ -32,7 +29,6 @@ enum EAction
 	DEFEND,
 	NONE
 };
-
 
 typedef struct BattleResult
 {

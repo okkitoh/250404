@@ -82,6 +82,9 @@
     <ClInclude Include="include\Animation.h">
       <Filter>include\UI\Base</Filter>
     </ClInclude>
+    <ClInclude Include="include\AnimationHandle.h">
+      <Filter>include\UI\Base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -120,9 +123,30 @@
     <ClCompile Include="src\Animation.cpp">
       <Filter>src\UI\Base</Filter>
     </ClCompile>
+    <ClCompile Include="src\AnimationHandle.cpp">
+      <Filter>src\UI\Base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\DuelingGame.png">
+      <Filter>rsrc</Filter>
+    </Image>
+    <Image Include="resources\AN_Knight_Idle.png">
+      <Filter>rsrc</Filter>
+    </Image>
+    <Image Include="resources\AN_Knight_Attack.png">
+      <Filter>rsrc</Filter>
+    </Image>
+    <Image Include="resources\AN_Knight_Defend.png">
+      <Filter>rsrc</Filter>
+    </Image>
+    <Image Include="resources\AN_Knight_Dying.png">
+      <Filter>rsrc</Filter>
+    </Image>
+    <Image Include="resources\AN_Knight_Parry.png">
+      <Filter>rsrc</Filter>
+    </Image>
+    <Image Include="resources\AN_Knight_Hurt.png">
       <Filter>rsrc</Filter>
     </Image>
   </ItemGroup>

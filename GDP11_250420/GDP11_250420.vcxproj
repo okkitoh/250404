@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Animation.h" />
+    <ClInclude Include="include\AnimationHandle.h" />
     <ClInclude Include="include\Character.h" />
     <ClInclude Include="include\DGDef.h" />
     <ClInclude Include="include\Dialogue.h" />
@@ -36,6 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Animation.cpp" />
+    <ClCompile Include="src\AnimationHandle.cpp" />
     <ClCompile Include="src\Character.cpp" />
     <ClCompile Include="src\Dialogue.cpp" />
     <ClCompile Include="src\Enemy.cpp" />
@@ -49,6 +51,12 @@
     <ClCompile Include="src\StartMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="resources\AN_Knight_Attack.png" />
+    <Image Include="resources\AN_Knight_Defend.png" />
+    <Image Include="resources\AN_Knight_Dying.png" />
+    <Image Include="resources\AN_Knight_Hurt.png" />
+    <Image Include="resources\AN_Knight_Idle.png" />
+    <Image Include="resources\AN_Knight_Parry.png" />
     <Image Include="resources\DuelingGame.png" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

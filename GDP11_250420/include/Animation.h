@@ -6,13 +6,6 @@
 
 // 2DAnimation System Design
 // --------------------------
-// Has position vec2
-// Has dimension width, height
-// Adjustable Frames per second
-//   - Needs to keep track of "duration "
-// Reuse view so animation has ability to "self-delete" at end of duration popping itself off the animation stack
-//
-// What if animation doesn't span the full sheet? interesting problem 
 // 
 // sheet.column    Must be number of divisions in the whole sheet width
 // sheet.rows      Must be number of divisions in the whole sheet height
@@ -20,18 +13,22 @@
 class Animation : public View
 {
 public:
-	Animation(SpriteID key, Vector2 position, int framesPerSecond, bool isLooping);
+	Animation(SpriteID key, Vector2 position, bool isLooping);
+	void SetSprite(SpriteID key);
+	void SetLooping(bool bLooping);
+	void SetPlayspeed(float playspeed);
+	void SetFramePosition(int framePosition);
 	void Update();
 	void Draw();
 	void GuiDraw();
 private:
+	SpriteID spriteid;
 	Sprite sheet;
 	Vector2 position; // screen space
-	int framesPerSecond;
 	bool isLooping;
 
 	Vector2 dimensions;
-	int keyframes;
 	int frameCounter;
 	int framePosition;
+	float playspeed;
 };

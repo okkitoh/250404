@@ -3,18 +3,38 @@
 #include "DGDef.h"
 #include "rlgl.h"
 
-Animation::Animation(SpriteID key, Vector2 position, int framesPerSecond, bool isLooping) : View()
+Animation::Animation(SpriteID key, Vector2 position, bool isLooping) : View()
 {
-	sheet = Sprites::GetSprite(KNIGHT_IDLE);
+	sheet = Sprites::GetSprite(key);
+	this->spriteid = key;
 	this->position = position;
-	this->framesPerSecond = framesPerSecond;
 	this->isLooping = isLooping;
+	this->playspeed = 1.f;
 	
 	dimensions.x = static_cast<float>(sheet.tex.width) / static_cast<float>(sheet.columns);
 	dimensions.y = static_cast<float>(sheet.tex.height) / static_cast<float>(sheet.rows);
-	keyframes = sheet.keyframes;
 	frameCounter = 0;
 	framePosition = 0;
+}
+void Animation::SetSprite(SpriteID key)
+{
+	if (this->spriteid != key)
+	{
+		this->spriteid = key;
+		sheet = Sprites::GetSprite(key);
+	}
+}
+void Animation::SetLooping(bool bLooping)
+{
+	this->isLooping = bLooping;
+}
+void Animation::SetPlayspeed(float playspeed)
+{
+	this->playspeed = playspeed;
+}
+void Animation::SetFramePosition(int framePosition)
+{
+	framePosition = framePosition % sheet.keyframes;
 }
 void Animation::Update()
 {
@@ -24,13 +44,12 @@ void Animation::Draw()
 {
 	if (IsActive())
 	{
-		// `TARGET_FPS / framesPerSecond` resulting value is equivalent to "draw after X amount of frames"
-		if (frameCounter >= TARGET_FPS / framesPerSecond)
+		if ((frameCounter * playspeed) >= TARGET_FPS / sheet.frameRate)
 		{
 			frameCounter = 0;
-			if (framePosition < keyframes - 1 || isLooping)
+			if (framePosition < sheet.keyframes - 1 || isLooping)
 			{
-				framePosition = ++framePosition % keyframes;
+				framePosition = ++framePosition % sheet.keyframes;
 			}
 
 		}
@@ -44,8 +63,7 @@ void Animation::Draw()
 		} Rectangle;
 		*/
 		int x = (framePosition % sheet.columns) * static_cast<int>(dimensions.x);
-		int y = framePosition / sheet.rows * static_cast<int>(dimensions.y);
-
+		int y = framePosition / sheet.columns * static_cast<int>(dimensions.y);
 		Rectangle source = {
 			x,
 			y,
@@ -55,8 +73,8 @@ void Animation::Draw()
 		Rectangle display = {
 			position.x - dimensions.x,
 			position.y - dimensions.y,
-			dimensions.x *2,
-			dimensions.y *2
+			dimensions.x,
+			dimensions.y
 		};
 		Vector2 origin = {
 			0,
