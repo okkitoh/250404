@@ -65,24 +65,6 @@ Camera2D camera = {
 };
 
 
-std::ostream& operator<<(std::ostream& out, const EAction& action)
-{
-	switch (action)
-	{
-	case ATTACK: out << "ATTACK"; return out;
-	case PARRY: out << "PARRY"; return out;
-	case DEFEND: out << "DEFEND"; return out;
-	case NONE: out << "NONE";
-	}
-	return out;
-}
-
-std::ostream& operator<<(std::ostream& out, const BattleResult& br)
-{
-	out << "inst. " << br.instigator->GetName() << " | " << br.target->GetName() << " | a. " << br.action << ", r. " << br.result << ", d. " << br.damage;
-	return out;
-}
-
 
 std::vector<Dialogue*> ResolveActions(EAction characterAction, int target, std::vector<EAction> enemyActions);
 BattleResult ComputeResult(Character& instigator, EAction action1, Character& target, EAction action2);
@@ -108,24 +90,62 @@ int main()
 	{
 		GameState::GetRef().UpdateViews();
 
-		if (GameState::GetRef().PeekPlayerAction() != EAction::IDLE)
-		{
-			int target = 0;
-			EAction PlayerAction = GameState::GetRef().ConsumePlayerAction();
-			std::vector<EAction> EnemyActions = { GameState::GetRef().Enemies[0].ChooseAction() };
-			std::vector<Dialogue*> DialogueSequence = ResolveActions(PlayerAction, target, EnemyActions);
-			while (!DialogueSequence.empty())
-			{
-				GameState::GetRef().PushView(DialogueSequence.back());
-				DialogueSequence.pop_back();
-			}
-		}
 		if (!GameState::GetRef().MainPlayer.IsAlive() && GameState::GetRef().GetPhase() == EViewContext::GAME_OVER)
 		{
 			GameState::GetRef().MainPlayer.SetHealth(1);
 			GameState::GetRef().ClearViews();
 			GameState::GetRef().SetPhase(EViewContext::GAME_OVER);
 			GameState::GetRef().PushView(new GameOverView());
+		}
+		else
+		{
+			if (!GameState::GetRef().IsProcessing())
+			{
+				if (GameState::GetRef().GetPhase() == EViewContext::END_TURN)
+				{
+					GameState::GetRef().MainPlayer.Tick();
+					GameState::GetRef().SetPhase(EViewContext::GAME_RUNNING);
+				}
+			}
+			else
+			{
+				if (GameState::GetRef().PeekPlayerAction() != EAction::IDLE)
+				{
+					int target = 0;
+					EAction PlayerAction = GameState::GetRef().ConsumePlayerAction();
+
+					if (!GameState::GetRef().MainPlayer.CanUseAction(PlayerAction))
+					{
+						GameState::GetRef().PushView(new Dialogue("I can't do that yet."));
+					}
+					else
+					{
+						if (PlayerAction == PARRY)
+						{
+							GameState::GetRef().MainPlayer.UseParry();
+						}
+						std::vector<EAction> EnemyActions;
+						for (int i = 0; i < MAX_ENEMIES; ++i)
+						{
+							EAction enemyAction = GameState::GetRef().Enemies[i].ChooseAction();
+							if (enemyAction == PARRY)
+							{
+								GameState::GetRef().Enemies[i].UseParry();
+							}
+							EnemyActions.push_back(enemyAction);
+						}
+
+
+						std::vector<Dialogue*> DialogueSequence = ResolveActions(PlayerAction, target, EnemyActions);
+						while (!DialogueSequence.empty())
+						{
+							GameState::GetRef().PushView(DialogueSequence.back());
+							DialogueSequence.pop_back();
+
+						}
+					}
+				}
+			}
 		}
 
 		BeginDrawing();
@@ -135,11 +155,13 @@ int main()
 			GameState::GetRef().DrawAnimations();
 			EndMode2D();
 
-			// This is where UI should draw (absolute positioning)
 			GameState::GetRef().GUIDrawViews();
 			DrawFPS(WINDOW_WIDTH - 90, 10);
 		}
 		EndDrawing();
+
+
+
 	}
 	CloseWindow();
 	return EXIT_SUCCESS;
@@ -350,6 +372,12 @@ std::vector<Dialogue*> ResolveActions(EAction playerAction, int target, std::vec
 			}
 		));
 	}
+	DialogueSequence.back()->OnExit([]() {
+		if (GameState::GetRef().GetPhase() == GAME_RUNNING)
+		{
+			GameState::GetRef().SetPhase(END_TURN);
+		}
+	});
 
 	return DialogueSequence;
 }

@@ -3,6 +3,7 @@
 #include "View.h"
 #include <functional>
 #include <string>
+#include <vector>
 
 
 
@@ -21,5 +22,5 @@ private:
 	std::string text;
 	std::function<void()> onEnter;
 	std::function<void()> onConfirm;
-	std::function<void()> onExit;
+	std::vector<std::function<void()>> onExit;
 };

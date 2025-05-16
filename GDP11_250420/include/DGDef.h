@@ -18,7 +18,8 @@ enum EViewContext
 	EXIT,
 	START_MENU,
 	GAME_RUNNING,
-	GAME_OVER
+	GAME_OVER,
+	END_TURN
 };
 
 enum EAction

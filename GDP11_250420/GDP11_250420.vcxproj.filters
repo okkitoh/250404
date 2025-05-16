@@ -149,5 +149,8 @@
     <Image Include="resources\AN_Knight_Hurt.png">
       <Filter>rsrc</Filter>
     </Image>
+    <Image Include="resources\Parry_Shield.png">
+      <Filter>rsrc</Filter>
+    </Image>
   </ItemGroup>
 </Project>

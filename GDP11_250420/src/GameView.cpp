@@ -66,17 +66,46 @@ void GameView::Update()
 }
 void GameView::GuiDraw()
 {
+	Character* player = &GameState::GetRef().MainPlayer;
+	// Player HP Bar
 	DrawText("HP", 18, 18, 18, WHITE);
-	float HP_size = 200 / GameState::GetRef().MainPlayer.GetMaxHealth();
-	DrawRectangle(60, 18, HP_size * GameState::GetRef().MainPlayer.GetHealth(), 18, RED);
-	DrawRectangle(60, 18, HP_size * GameState::GetRef().MainPlayer.GetMaxHealth(), 18, Color{ 230, 41, 55, 56 });
-	DrawText(TextFormat("%d / %d", GameState::GetRef().MainPlayer.GetHealth(), GameState::GetRef().MainPlayer.GetMaxHealth()), 128, 18, 18, WHITE);
+	float HP_size = 200 / player->GetMaxHealth();
+	DrawRectangle(60, 18, HP_size * player->GetHealth(), 18, RED);
+	DrawRectangle(60, 18, HP_size * player->GetMaxHealth(), 18, Color{ 230, 41, 55, 56 });
+	DrawText(TextFormat("%d / %d", player->GetHealth(), player->GetMaxHealth()), 128, 18, 18, WHITE);
 
+
+	Sprite parryIcon = Sprites::GetSprite(SpriteID::PARRY_ICON);
+	float scale = 0.33f;
+	Vector2 dimension = { parryIcon.tex.width * scale, parryIcon.tex.height* scale };
+	Vector2 iconPstn = { 52, 42 };
+
+	float parryCount = player->GetParryCounter();
+	while (parryCount > 0)
+	{
+		if (parryCount < 1.0)
+		{
+			float partialY = dimension.y * parryCount;
+			float offsetY = dimension.y - partialY;
+			DrawRectangle(iconPstn.x, iconPstn.y + offsetY, dimension.x, partialY, LIGHTGRAY);
+		}
+		else
+		{
+			DrawRectangle(iconPstn.x, iconPstn.y, dimension.x, dimension.y, LIGHTGRAY);
+		}
+		DrawTextureEx(parryIcon.tex, iconPstn, 0, scale, WHITE);
+		iconPstn.x += 40;
+		parryCount--;
+	}
+
+
+	// Round Number
 	const Enemy& enemy = GameState::GetRef().Enemies[0];
 	std::string roundNumberLabel = "Round " + std::to_string(GameState::GetRef().difficulty);
 	int labelSize = MeasureText(roundNumberLabel.c_str(), 32) / 2;
 	DrawText(roundNumberLabel.c_str(), WINDOW_WIDTH / 2 - labelSize, 32, 32, WHITE);
 
+	// Enemy Nameplate
 	int namesize = MeasureText(enemy.GetName().c_str(), 32) / 2;
 	DrawText(enemy.GetName().c_str(), WINDOW_WIDTH / 2.f - namesize, 72, 32, WHITE);
 

@@ -63,12 +63,11 @@ public:
 		Animation* temp = new Animation(SpriteID::GOBLIN_IDLE, { WINDOW_WIDTH - (WINDOW_HEIGHT / 2), WINDOW_HEIGHT / 2 }, true);
 		temp->SetFlip(true);
 		enemyModel = RegisterAnimation(temp);
-
-		SetPhase(EViewContext::START_MENU);
 	}
 	inline void SetPhase(EViewContext phase) { this->phase = phase; }
 	inline EViewContext GetPhase() { return phase; }
 	inline bool IsRunning() { return phase != EViewContext::EXIT; }
+	inline bool IsProcessing() { return phase == EViewContext::GAME_RUNNING; }
 
 	inline void SetPlayerAction(EAction playerAction) { this->playerAction = playerAction; }
 	inline EAction PeekPlayerAction() { return this->playerAction; }
@@ -153,7 +152,6 @@ public:
 			if (!AnimationStack[i]->IsValid())
 			{
 				delete AnimationStack[i];
-				// Burden of ownership rests on user
 				AnimationStack.erase(AnimationStack.begin() + i);
 			}
 		}

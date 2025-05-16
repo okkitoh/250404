@@ -13,6 +13,10 @@ Player::Player() : Character()
 	this->AtkPower = 2;
 	this->Armor = 2;
 	this->Name = "Guy";
+
+	this->ParryMax = 3.0;
+	this->ParryCounter = this->ParryMax;
+	this->ParryRegen = 0.5;
 	
 }
 // Passes all arguments to Character Constructor

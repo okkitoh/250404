@@ -58,6 +58,7 @@
     <Image Include="resources\AN_Knight_Idle.png" />
     <Image Include="resources\AN_Knight_Parry.png" />
     <Image Include="resources\DuelingGame.png" />
+    <Image Include="resources\Parry_Shield.png" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

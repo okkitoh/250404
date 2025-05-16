@@ -26,10 +26,10 @@ Dialogue::Dialogue(std::string text, std::function<void()> onEnter, std::functio
 	this->text = text;
 	OnEnter(onEnter);
 	OnConfirm(onConfirm);
-	OnExit([onExit]() {
-		onExit();
+	OnExit([]() {
 		GameState::GetRef().PopView();
 	});
+	OnExit(onExit);
 }
 
 void Dialogue::OnEnter(std::function<void()> callback)
@@ -42,7 +42,7 @@ void Dialogue::OnConfirm(std::function<void()> callback)
 }
 void Dialogue::OnExit(std::function<void()> callback)
 {
-	onExit = callback;
+	onExit.push_back(callback);
 }
 void Dialogue::Update()
 {
@@ -54,7 +54,11 @@ void Dialogue::Update()
 	if (GetKeyPressed())
 	{
 		onConfirm();
-		onExit();
+		while(!onExit.empty())
+		{
+			onExit.back()();
+			onExit.pop_back();
+		}
 	}
 }
 void Dialogue::GuiDraw()

@@ -9,6 +9,7 @@ struct Sprite
 	int rows = 1;      // Must span whole height of sheet
 	int keyframes = 1; // Total nummber of frames in animation
 	int frameRate = 1; // assuming 60 frames in second, how many times played in a second?
+	int frameStart = 0;
 };
 
 
@@ -16,6 +17,7 @@ enum SpriteID
 {
 	UNKNOWN,
 	GRAVE,
+	PARRY_ICON,
 	KNIGHT_IDLE,
 	KNIGHT_ATTACK,
 	KNIGHT_DEFEND,

@@ -19,6 +19,10 @@ EMobType Enemy::GetMobType()
 EAction Enemy::ChooseAction()
 {
 	int ActionInput = Distribution(Generator);
+	while (!CanUseAction(GetActionFromInput(ActionInput)))
+	{
+		ActionInput = Distribution(Generator);;
+	}
 	return GetActionFromInput(ActionInput);
 }
 void Enemy::IncreaseDifficulty(int RoundNumber)
@@ -31,6 +35,9 @@ void Enemy::IncreaseDifficulty(int RoundNumber)
 			AtkPower += RoundNumber;
 			Armor += RoundNumber / 2;
 			Name = "Knight Champion";
+			ParryMax = 3.0;
+			ParryCounter = 1.0;
+			ParryRegen = 0.33;
 			MobType = KNIGHT;
 			break;
 		case 4:
@@ -38,6 +45,9 @@ void Enemy::IncreaseDifficulty(int RoundNumber)
 			Health = MaxHealth;
 			AtkPower += RoundNumber;
 			Name = "Skeleton Knight";
+			ParryMax = 2.0;
+			ParryCounter = 0.0;
+			ParryRegen = 0.20;
 			MobType = SKELETON_KNIGHT;
 			break;
 		case 3:
@@ -45,6 +55,9 @@ void Enemy::IncreaseDifficulty(int RoundNumber)
 			Health = MaxHealth;
 			AtkPower += RoundNumber;
 			Name = "Ogre";
+			ParryMax = 1.0;
+			ParryCounter = 0.0;
+			ParryRegen = 0.20;
 			MobType = OGRE;
 			break;
 		case 2:
@@ -52,6 +65,9 @@ void Enemy::IncreaseDifficulty(int RoundNumber)
 			Health = MaxHealth;
 			AtkPower = 2;
 			Name = "Cyclops";
+			ParryMax = 1.0;
+			ParryCounter = 0.0;
+			ParryRegen = 0.10;
 			MobType = CYCLOPS;
 			break;
 		case 1:
@@ -60,6 +76,9 @@ void Enemy::IncreaseDifficulty(int RoundNumber)
 			Health = MaxHealth;
 			AtkPower = 1;
 			Name = "Goblin";
+			ParryMax = 1.0;
+			ParryCounter = 0.0;
+			ParryRegen = 0.10;
 			MobType = GOBLIN;
 			break;
 	}
