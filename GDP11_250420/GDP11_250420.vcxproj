@@ -28,6 +28,8 @@
     <ClInclude Include="include\GameOverView.h" />
     <ClInclude Include="include\GameState.h" />
     <ClInclude Include="include\GameView.h" />
+    <ClInclude Include="include\Item.h" />
+    <ClInclude Include="include\ItemMenu.h" />
     <ClInclude Include="include\Log.h" />
     <ClInclude Include="include\Menu.h" />
     <ClInclude Include="include\Player.h" />
@@ -43,6 +45,8 @@
     <ClCompile Include="src\Enemy.cpp" />
     <ClCompile Include="src\GameOverView.cpp" />
     <ClCompile Include="src\GameView.cpp" />
+    <ClCompile Include="src\Item.cpp" />
+    <ClCompile Include="src\ItemMenu.cpp" />
     <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Menu.cpp" />

@@ -12,10 +12,7 @@
 
 struct GameState
 {
-// Secret Forbidden Technique: Singleton Pattern
-// Anti-pattern that seeps into every part of the codebase (find all references on GetRef() D:)
-// Makes testing extremely difficult requiring a dependency injection alternative (DI is the next evolutionary step from singletons)
-// The upside is easy brute force solution for small projects
+// Yeah singleton sucks
 private:
 	GameState() : difficulty(1), playerAction(EAction::IDLE) {}
 public:
@@ -47,7 +44,7 @@ public:
 	int difficulty = 1;
 	Enemy Enemies[MAX_ENEMIES];
 	Player MainPlayer;
-	EAction playerAction = EAction::IDLE; // ideally should be a message queue but seems abit overkill in turned-based. only ever 2 actions, confirm/cancel 
+	EAction playerAction = EAction::IDLE;
 	AnimationHandle playerModel = { 0 };
 	AnimationHandle enemyModel = { 0 };
 
@@ -64,6 +61,7 @@ public:
 		temp->SetFlip(true);
 		enemyModel = RegisterAnimation(temp);
 	}
+
 	inline void SetPhase(EViewContext phase) { this->phase = phase; }
 	inline EViewContext GetPhase() { return phase; }
 	inline bool IsRunning() { return phase != EViewContext::EXIT; }

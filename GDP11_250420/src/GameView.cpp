@@ -1,7 +1,9 @@
 
 #include "GameView.h"
-#include "GameState.h"
+
 #include "Dialogue.h"
+#include "GameState.h"
+#include "ItemMenu.h"
 #include "raylib.h"
 #include "raymath.h"
 
@@ -21,7 +23,7 @@ GameView::GameView() : Menu()
 		GameState::GetRef().SetPlayerAction(EAction::DEFEND);
 	});
 	AddOption("Items", []() {
-		printf("Show item menu\n");
+		GameState::GetRef().PushView(new ItemMenu());
 	});
 }
 void GameView::Update()
@@ -74,12 +76,11 @@ void GameView::GuiDraw()
 	DrawRectangle(60, 18, HP_size * player->GetMaxHealth(), 18, Color{ 230, 41, 55, 56 });
 	DrawText(TextFormat("%d / %d", player->GetHealth(), player->GetMaxHealth()), 128, 18, 18, WHITE);
 
-
+	// Parry Icon Bar
 	Sprite parryIcon = Sprites::GetSprite(SpriteID::PARRY_ICON);
 	float scale = 0.33f;
 	Vector2 dimension = { parryIcon.tex.width * scale, parryIcon.tex.height* scale };
 	Vector2 iconPstn = { 52, 42 };
-
 	float parryCount = player->GetParryCounter();
 	while (parryCount > 0)
 	{

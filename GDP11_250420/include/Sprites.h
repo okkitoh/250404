@@ -2,6 +2,8 @@
 
 #include "raylib.h"
 
+
+
 struct Sprite
 {
 	Texture2D tex = { 0 };
@@ -18,6 +20,8 @@ enum SpriteID
 	UNKNOWN,
 	GRAVE,
 	PARRY_ICON,
+	POTION_ICON,
+
 	KNIGHT_IDLE,
 	KNIGHT_ATTACK,
 	KNIGHT_DEFEND,

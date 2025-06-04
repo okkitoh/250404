@@ -16,7 +16,6 @@ Character::Character()
 	this->ParryRegen = 0.0;
 	Generator = std::mt19937(std::random_device{}());
 	Distribution.param(std::uniform_int_distribution<>::param_type(0, 2));
-	
 }
 Character::Character(int Health, int AtkPower, int Armor, std::string Name)
 {
@@ -25,6 +24,11 @@ Character::Character(int Health, int AtkPower, int Armor, std::string Name)
 	this->AtkPower = AtkPower;
 	this->Armor = Armor;
 	this->Name = Name;
+
+	this->ParryCounter = 0.0;
+	this->ParryMax = 0.0;
+	this->ParryRegen = 0.0;
+
 	Generator = std::mt19937(std::random_device{}());
 	Distribution.param(std::uniform_int_distribution<>::param_type(0, 2));
 }
@@ -72,7 +76,6 @@ double Character::GetParryRegen()
 {
 	return ParryRegen;
 }
-
 void Character::Tick()
 {
 	this->ParryCounter += this->ParryRegen;

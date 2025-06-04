@@ -120,10 +120,17 @@ int main()
 					}
 					else
 					{
+
+						std::vector<Dialogue*> DialogueSequence;
 						if (PlayerAction == PARRY)
 						{
 							GameState::GetRef().MainPlayer.UseParry();
 						}
+						else if (PlayerAction == ITEM)
+						{
+							DialogueSequence.push_back(new Dialogue("Player used item!"));
+						}
+
 						std::vector<EAction> EnemyActions;
 						for (int i = 0; i < MAX_ENEMIES; ++i)
 						{
@@ -134,9 +141,8 @@ int main()
 							}
 							EnemyActions.push_back(enemyAction);
 						}
-
-
-						std::vector<Dialogue*> DialogueSequence = ResolveActions(PlayerAction, target, EnemyActions);
+						std::vector<Dialogue*> BattleDialogue = ResolveActions(PlayerAction, target, EnemyActions);
+						DialogueSequence.insert(DialogueSequence.end(), BattleDialogue.begin(), BattleDialogue.end());
 						while (!DialogueSequence.empty())
 						{
 							GameState::GetRef().PushView(DialogueSequence.back());
@@ -178,6 +184,7 @@ std::vector<Dialogue*> ResolveActions(EAction playerAction, int target, std::vec
 	{
 		{{DEFEND, NONE}, "%s takes a defensive stance"},
 		{{PARRY, NONE}, "%s takes a parry stance"},
+		{{ATTACK, ITEM}, "%s attacks %s for %d damage"},
 		{{ATTACK, ATTACK}, "%s attacks %s for %d damage"},
 		{{DEFEND, ATTACK}, "%s defends against %s attack and takes %d damage" },
 		{{PARRY, ATTACK}, "%s parries %s attack and deals %d damage"}
@@ -372,21 +379,28 @@ std::vector<Dialogue*> ResolveActions(EAction playerAction, int target, std::vec
 			}
 		));
 	}
-	DialogueSequence.back()->OnExit([]() {
-		if (GameState::GetRef().GetPhase() == GAME_RUNNING)
-		{
-			GameState::GetRef().SetPhase(END_TURN);
-		}
-	});
 
+	if (!DialogueSequence.empty())
+	{
+		DialogueSequence.back()->OnExit([]() {
+			if (GameState::GetRef().GetPhase() == GAME_RUNNING)
+			{
+				GameState::GetRef().SetPhase(END_TURN);
+			}
+			});
+	}
 	return DialogueSequence;
 }
 // BattleResult::result, answers question what happens to instigator's action when target does blah
-//     A  D  P  Tgt
-//  A  X  1  1      X = Both sides succeed
-//  D  0  0  0      1 = instigator disadvantage
-//  P  0  0  0      0 = Nothing happens
-// Ins
+//     A  D  P  I  Tgt
+//  A  X  1  1  1    X = Both sides succeed
+//  D  0  0  0  0    1 = instigator disadvantage
+//  P  0  0  0  0    0 = Nothing happens
+//  Ins
+//                   A = Attack
+//                   D = Defend
+//                   P = Parry
+//                   I = Item
 BattleResult ComputeResult(Character& instigator, EAction action1, Character& target, EAction action2)
 {
 
@@ -418,6 +432,10 @@ BattleResult ComputeResult(Character& instigator, EAction action1, Character& ta
 				case DEFEND:
 					res.result = DEFEND;
 					res.damage = 0;
+				break;
+				case ITEM:
+					res.result = ATTACK;
+					res.damage = res.instigator->GetAtkPower();
 				break;
 				case NONE:
 					res.result = action1;

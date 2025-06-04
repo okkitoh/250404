@@ -28,6 +28,7 @@ enum EAction
 	ATTACK,
 	PARRY,
 	DEFEND,
+	ITEM,
 	NONE
 };
 

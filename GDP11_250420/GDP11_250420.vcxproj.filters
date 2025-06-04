@@ -85,6 +85,12 @@
     <ClInclude Include="include\AnimationHandle.h">
       <Filter>include\UI\Base</Filter>
     </ClInclude>
+    <ClInclude Include="include\ItemMenu.h">
+      <Filter>include\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Item.h">
+      <Filter>include\Entity</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -125,6 +131,12 @@
     </ClCompile>
     <ClCompile Include="src\AnimationHandle.cpp">
       <Filter>src\UI\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ItemMenu.cpp">
+      <Filter>src\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Item.cpp">
+      <Filter>src\Entity</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

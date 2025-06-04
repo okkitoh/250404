@@ -1,8 +1,10 @@
 #pragma once
 
-#include <string>
+#include <map>
 #include <random>
+#include <string>
 #include "DGDef.h"
+#include "Item.h"
 
 
 
@@ -44,6 +46,7 @@ protected:
 	double ParryMax;
 	double ParryRegen; // per turn
 
+	std::map<ItemID, int> Inventory;
 	std::string Name;
 	std::mt19937 Generator;
 	std::uniform_int_distribution<> Distribution;

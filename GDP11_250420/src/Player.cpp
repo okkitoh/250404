@@ -7,22 +7,16 @@
 
 Player::Player() : Character()
 {
-	// Base Stats
-	this->MaxHealth = 5;
-	this->Health = this->MaxHealth;
-	this->AtkPower = 2;
-	this->Armor = 2;
-	this->Name = "Guy";
-
-	this->ParryMax = 3.0;
-	this->ParryCounter = this->ParryMax;
-	this->ParryRegen = 0.5;
-	
+	this->Reset();
 }
 // Passes all arguments to Character Constructor
 Player::Player(int Health, int AtkPower, int Armor, std::string Name) : Character(Health, AtkPower, Armor, Name)
 {
-
+	this->Reset();
+}
+std::map<ItemID, int>& Player::GetInventory()
+{
+	return Inventory;
 }
 EAction Player::ChooseAction()
 {
@@ -46,4 +40,21 @@ EAction Player::ChooseAction()
 	Input -= 1;
 
 	return GetActionFromInput(Input);
+}
+void Player::Reset()
+{
+	// Base Stats
+	this->MaxHealth = 5;
+	this->Health = this->MaxHealth;
+	this->AtkPower = 2;
+	this->Armor = 2;
+	this->Name = "Guy";
+
+	this->ParryMax = 3.0;
+	this->ParryCounter = this->ParryMax;
+	this->ParryRegen = 0.5;
+
+	this->Inventory.clear();
+	this->Inventory[CONSUMABLE_POTION] = 3;
+	this->Inventory[CONSUMABLE_BLIND] = 2;
 }

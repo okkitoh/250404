@@ -9,11 +9,11 @@ class Player : public Character
 public:
 	Player();
 	Player(int Health, int AtkPower, int Armor, std::string Name);
-	void Reset()
-	{
-		SetHealth(GetMaxHealth());
-	}
+	void Reset();
 	EAction ChooseAction() override;
+	std::map<ItemID, int>& GetInventory();
+private:
+	std::map<ItemID, int> Inventory;
 };
 
 
